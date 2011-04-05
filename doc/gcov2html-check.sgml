@@ -1,0 +1,36 @@
+<!-- 
+  Copyright (C) 2006-2011  Trevor Woerner
+  VIM OPTIONS: vim:ts=4:sw=4:expandtab:softtabstop=4
+-->
+
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
+    <!ENTITY filename   SYSTEM "file.sgml">
+    <!ENTITY text       "<tag>text</tag>">
+]>
+
+<book id="index">
+    <bookinfo>
+        <title>gcov2html-check</title>
+        <date>April 5, 2011</date>
+        <author><firstname>Trevor</firstname><surname>Woerner</surname></author>
+        <copyright>
+            <year>2006-2011</year>
+            <holder>Trevor Woerner</holder>
+        </copyright>
+        <revhistory>
+            <revision>
+                <revnumber>0.1.0</revnumber>
+                <date></date>
+                <authorinitials>tw</authorinitials>
+                <revremark>Document start.</revremark>
+            </revision>
+        </revhistory>
+    </bookinfo>
+
+<chapter id="ch1"><title>Chapter 1</title>
+ <para>
+.
+ </para>
+</chapter>
+
+</book>
