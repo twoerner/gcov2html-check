@@ -1,0 +1,8 @@
+README file for gcov2html-check project.
+April 5, 2011
+
+If you are using 'check' to unit test C code this project
+can be integrated into a build procedure to generate
+colourized html of your source code under test. The
+different colours will indicate which parts of your code
+are being tested and to what degree.
