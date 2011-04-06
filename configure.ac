@@ -1,6 +1,6 @@
 dnl Copyright (C) 2011  Trevor Woerner
 
-AC_INIT([gcov2html-check], 0.1.1, twoerner@gmail.com, gcov2html-check)
+AC_INIT([gcov2html-check], 0.1.2, twoerner@gmail.com, gcov2html-check)
 AC_CONFIG_SRCDIR(src/gcov2html-check.c)
 AC_CONFIG_AUX_DIR(cfg)
 AM_INIT_AUTOMAKE([foreign no-dist-gzip dist-bzip2 1.9])
