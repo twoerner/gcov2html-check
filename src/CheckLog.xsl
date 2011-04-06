@@ -1,5 +1,5 @@
-<!-- Copyright (C) 2006-2011  Trevor Woerner -->
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2006-2011  Trevor Woerner -->
 
 <xsl:stylesheet
 	version="1.0"
