@@ -1,0 +1,6 @@
+prefix=@prefix@
+pkgdatadir=@datarootdir@/@PACKAGE@
+
+Name: gcov2html-check
+Description: A gcov visualization tool which works with the 'check' unit test framework for C code.
+Version: @VERSION@
