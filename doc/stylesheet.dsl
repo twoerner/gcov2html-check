@@ -140,6 +140,9 @@
 (define %chap-app-running-head-autolabel% 
   #t)
 
+;;Number lines in Programlistings?
+(define %number-programlisting-lines%
+ #t)
 
 ;;======================================
 ;;Article Options
@@ -1018,7 +1021,7 @@
 
 ;;Number lines in Programlistings?
 (define %number-programlisting-lines%
- #f)
+ #t)
 
 ;;Should verbatim items be 'shaded' with a table?
 (define %shade-verbatim% 
