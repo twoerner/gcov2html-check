@@ -15,14 +15,14 @@ sgml_pdfdir = $(docbasedir)/pdf
 sgml_txtdir = $(docbasedir)/txt
 stylesheet = $(srcdir)/stylesheet.dsl
 
-index.html: gcov2html-check.sgml
+index.html: gcov2html-check.sgml stylesheet.dsl
 	$(RM) *.html *.htm
 	$(doc_html) -d '$(stylesheet)#html' $<
 
-gcov2html-check.pdf: gcov2html-check.sgml
+gcov2html-check.pdf: gcov2html-check.sgml stylesheet.dsl
 	$(doc_pdf) -d '$(stylesheet)#print' $<
 
-gcov2html-check.txt: gcov2html-check.sgml
+gcov2html-check.txt: gcov2html-check.sgml stylesheet.dsl
 	$(doc_txt) -d '$(stylesheet)#html' $<
 
 pdf: gcov2html-check.pdf
