@@ -557,7 +557,7 @@ utility to generate an <filename>*.html</filename> file of the source code where
 the colours of the individual lines indicates the information conveyed in the
 <filename>bsort.c.gcov</filename> file visually.
   <screen>
-$ <command>gcov2html-check -a bsort.c.gcov</command>
+$ <command>gcov2html-check bsort.c.gcov</command>
   </screen>
   <graphic fileref="html.png">
  </para>

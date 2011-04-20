@@ -28,7 +28,6 @@ static void process_code (char *inBuf_p, char *outBuf_p, unsigned sz);
 /* ------------------------------------------- */
 static char *inFileName_pG = NULL;
 static char *outFileName_pG = NULL;
-static bool useAbs_G = false;
 
 /* ------------------------------------------- */
 /* meat and potatoes                           */
@@ -169,30 +168,22 @@ find_largest_count (FILE *inFile_p)
 
 	// parse through gcov file
 	// to find the largest count
+	// thankfully the "Runs:" line comes early
 	largestCount = 0;
 	while (fgets (line, LINESZ, inFile_p) != NULL) {
-		if (useAbs_G) {
-			if (strncmp (line, "function", 8) == 0)
-				continue;
-			if (strncmp (line, "call", 4) == 0)
-				continue;
-			if (strncmp (line, "branch", 6) == 0)
-				continue;
+		if (strncmp (line, "function", 8) == 0)
+			continue;
+		if (strncmp (line, "call", 4) == 0)
+			continue;
+		if (strncmp (line, "branch", 6) == 0)
+			continue;
 
-			// get count
-			sscanf (line, " %d", &count);
-			if (count > largestCount)
-				largestCount = count;
-		}
-		else {
-			if (strncmp (line, "        -:    0:Runs:", 21) == 0) {
-				sscanf (line, "        -:    0:Runs:%d", &largestCount);
-				goto done;
-			}
-		}
+		// get count
+		sscanf (line, " %d", &count);
+		if (count > largestCount)
+			largestCount = count;
 	}
 
-done:
 	rewind (inFile_p);
 	return largestCount;
 }
@@ -260,13 +251,12 @@ process_cmdline_args (int argc, char *argv[])
 	char *ptr;
 	struct option longOpts[] = {
 		{"help", no_argument, NULL, 'h'},
-		{"abs", no_argument, NULL, 'a'},
 		{"out", required_argument, NULL, 'o'},
 		{NULL, 0, NULL, 0},
 	};
 
 	for (;;) {
-		c = getopt_long (argc, argv, "hao:", longOpts, NULL);
+		c = getopt_long (argc, argv, "ho:", longOpts, NULL);
 		if (c == -1)
 			break;
 
@@ -274,10 +264,6 @@ process_cmdline_args (int argc, char *argv[])
 			case 'h':
 				usage (argv[0]);
 				exit (0);
-
-			case 'a':
-				useAbs_G = true;
-				break;
 
 			case 'o':
 				outFileName_pG = strdup (optarg);
@@ -331,7 +317,6 @@ usage (const char *cmd_p)
 	printf ("USAGE: %s [options] <gcov file>\n", cmd_p);
 	printf ("  where:\n");
 	printf ("    --help | -h          This usage information.\n");
-	printf ("    --abs  | -a          Use the absolute line execution times instead of runs.\n");
 	printf ("    --out  | -o <file>   Send output to <file> instead of calculated filename.\n");
 	printf ("\n");
 	printf ("bugs, issues, requests, problems? %s\n", PACKAGE_BUGREPORT);
