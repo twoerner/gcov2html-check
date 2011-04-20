@@ -5,7 +5,8 @@
 ########################
 SUBDIRS = 
 .PHONY: pdf txt
-EXTRA_DIST = gcov2html-check.sgml stylesheet.dsl
+IMAGES = html.png
+EXTRA_DIST = gcov2html-check.sgml stylesheet.dsl $(IMAGES)
 if BUILDDOCS
 all-local:: index.html pdf txt
 endif
@@ -14,12 +15,19 @@ sgml_htmldir = $(docbasedir)/html
 sgml_pdfdir = $(docbasedir)/pdf
 sgml_txtdir = $(docbasedir)/txt
 stylesheet = $(srcdir)/stylesheet.dsl
+INST_IMAGES = $(addprefix $(top_srcdir)/doc/,$(IMAGES))
 
-index.html: gcov2html-check.sgml stylesheet.dsl
+index.html: gcov2html-check.sgml stylesheet.dsl $(IMAGES)
 	$(RM) *.html *.htm
+	for image in $(INST_IMAGES); do \
+		$(INSTALL) "$$image" .; \
+	done
 	$(doc_html) -d '$(stylesheet)#html' $<
 
-gcov2html-check.pdf: gcov2html-check.sgml stylesheet.dsl
+gcov2html-check.pdf: gcov2html-check.sgml stylesheet.dsl $(IMAGES)
+	for image in $(INST_IMAGES); do \
+		$(INSTALL) "$$image" .; \
+	done
 	$(doc_pdf) -d '$(stylesheet)#print' $<
 
 gcov2html-check.txt: gcov2html-check.sgml stylesheet.dsl
@@ -43,3 +51,4 @@ uninstall-local::
 
 clean-local::
 	$(RM) *.html *.htm *.pdf *.txt
+	-$(RM) $(IMAGES)

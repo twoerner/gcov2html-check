@@ -5,7 +5,13 @@
 
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook V4.1//EN" [
     <!ENTITY filename   SYSTEM "file.sgml">
-    <!ENTITY text       "<tag>text</tag>">
+    <!ENTITY check      "<literal>Check</literal>">
+    <!ENTITY autotools  "<literal>autotools</literal>">
+    <!ENTITY Makefile   "<literal>Makefile</literal>">
+    <!ENTITY gcc        "<literal>gcc</literal>">
+    <!ENTITY gcov       "<literal>gcov</literal>">
+    <!ENTITY make       "<literal>make</literal>">
+    <!ENTITY gcov2html-check "<literal>gcov2html-check</literal>">
 ]>
 
 <book id="index">
@@ -20,16 +26,594 @@
         <revhistory>
             <revision>
                 <revnumber>0.1.0</revnumber>
-                <date></date>
+                <date>April 5, 2011</date>
                 <authorinitials>tw</authorinitials>
                 <revremark>Document start.</revremark>
+            </revision>
+            <revision>
+                <revnumber>0.1.1</revnumber>
+                <date>April 19, 2011</date>
+                <authorinitials>tw</authorinitials>
+                <revremark>Filled out most of the content.</revremark>
             </revision>
         </revhistory>
     </bookinfo>
 
-<chapter id="ch1"><title>Chapter 1</title>
+<chapter id="mot"><title>Motivation</title>
  <para>
-.
+<literal>Gcc</literal> comes with a code coverage tool called &gcov;.
+The output from &gcov; is a plain text file: detailed but dry. This project
+uses the output from &gcov; to colourize the original source code in
+<literal>html</literal> to allow the user to more quickly determine which
+parts of the code are run, relatively, more or less often than others.
+ </para><para>
+If you setup your build using the &autotools; and make use
+of the "<literal>make check</literal>" target, you can easily encorporate
+this <literal>gcov2html-check</literal> tool to provide <literal>html</literal>
+files of your source code showing unit and/or integration test coverage. If
+your application code is in C there is a unit test helper tool called
+&check; which this project assumes you are using.
+ </para>
+</chapter>
+
+<chapter id="cs"><title>Code Sample</title>
+ <para>
+In order, of course, to demonstrate the concepts in this document I will need some samle code.
+It would be preferable to find code which has some sort of dynamic execution (so that different
+runs produce slightly different output, i.e. different colours) but which is
+easy to compile (doesn't require lots or any external libraries, other than the C library),
+easy to understand (preferably something any developer should easily understand),
+easy to test (contains multiple, logical functions),
+and isn't hard for the user to run (preferably no command-line arguments).
+ </para><para>
+I decided to write a quick-and-dirty bubble sort implementation in C.
+My implementation starts off looking like this:
+  <programlistingco>
+   <areaspec>
+    <area id="cs.plco.main.args" coords='17'>
+    <area id="cs.plco.main.rdm" coords='22'>
+    <areaset id="cs.plco.main.p1" coords="">
+     <area id="cs.plco.main.p1c1" coords='24'>
+     <area id="cs.plco.main.p1c2" coords='25'>
+    </areaset>
+    <area id="cs.plco.main.sort" coords='27'>
+    <areaset id="cs.plco.main.p2" coords="">
+     <area id="cs.plco.main.p2c1" coords='29'>
+     <area id="cs.plco.main.p2c2" coords='30'>
+    </areaset>
+    <area id="cs.plco.main.swap" coords='32'>
+   </areaspec>
+   <programlisting>
+/*
+ * Copyright (C) 2011  Trevor Woerner
+ */
+
+#include &lt;stdio.h>
+#include &lt;stdbool.h>
+#include &lt;stdlib.h>
+#include &lt;time.h>
+
+#define ARRSZ 32
+
+static void randomize (int arr[], unsigned sz);
+static unsigned bsort (int arr[], unsigned sz);
+static void print_array (int arr[], unsigned sz);
+
+int
+main (void)
+{
+	int arr[ARRSZ];
+	unsigned swaps;
+
+	randomize (arr, ARRSZ);
+
+	printf ("start: ");
+	print_array (arr, ARRSZ);
+
+	swaps = bsort (arr, ARRSZ);
+
+	printf ("  end: ");
+	print_array (arr, ARRSZ);
+
+	printf ("swaps: %u\n", swaps);
+
+	return 0;
+}
+
+static void
+randomize (int arr[], unsigned sz)
+{
+	time_t now;
+	unsigned i;
+
+	now = time (NULL);
+	srand ((unsigned int)now);
+
+	for (i=0; i&lt;sz; ++i)
+		arr[i] = rand () % sz;
+}
+
+static unsigned
+bsort (int arr[], unsigned sz)
+{
+	unsigned i, j;
+	int tmp;
+	bool swaps;
+	unsigned swapCnt = 0;
+
+	for (i=(sz-1); i>0; --i) {
+		swaps = false;
+		for (j=0; j&lt;i; ++j) {
+			if (arr[j] > arr[j+1]) {
+				swaps = true;
+				++swapCnt;
+				tmp = arr[j];
+				arr[j] = arr[j+1];
+				arr[j+1] = tmp;
+			}
+		}
+		if (!swaps)
+			break;
+	}
+
+	return swapCnt;
+}
+
+static void
+print_array (int arr[], unsigned sz)
+{
+	unsigned i;
+
+	printf ("(");
+	for (i=0; i&lt;sz; ++i) {
+		printf ("%u", arr[i]);
+		if (i != (sz - 1))
+			printf (" ");
+	}
+	printf (")\n");
+}
+   </programlisting>
+   <calloutlist>
+    <callout arearefs="cs.plco.main.args">
+     <para>The <function>main()</function> function takes no command-line arguments,</para>
+    </callout>
+    <callout arearefs="cs.plco.main.rdm">
+     <para>calls a function (<function>randomize()</function>) to fill in an array with
+     arbitrary integer values,</para>
+    </callout>
+    <callout arearefs="cs.plco.main.p1">
+     <para>prints out the random array,</para>
+    </callout>
+    <callout arearefs="cs.plco.main.sort">
+     <para>sorts the array,</para>
+    </callout>
+    <callout arearefs="cs.plco.main.p2">
+     <para>prints out the sorted array,</para>
+    </callout>
+    <callout arearefs="cs.plco.main.swap">
+     <para>then prints the number of swaps that took place during the sort.</para>
+    </callout>
+   </calloutlist>
+  </programlistingco>
+ </para><para>
+For the initial pass I'll use the following simple &Makefile;:
+  <programlisting>
+.PHONY: all clean
+ALL = bsort
+
+all: $(ALL)
+clean::
+    $(RM) $(ALL)
+  </programlisting>
+ </para>
+</chapter>
+
+<chapter id="gcov"><title>Gcov</title>
+ <para>
+<ulink url="http://gcc.gnu.org/onlinedocs/gcc/Gcov.html"><literal>Gcov</literal></ulink>:
+  <blockquote><para>
+is a tool you can use in conjunction with GCC to test code coverage in your programs
+  </para></blockquote>
+ </para><para>
+To obtain coverage analysis of the execution of some code you must follow a couple steps.
+First, when compiling your code you need to add two additional flags,
+<literal>-fprofile-arcs</literal> and <literal>-ftest-coverage</literal>,
+to the compile line.
+Then, when the resulting binary is run, coverage data is collected and stored in
+several binary files. If you post-process this data with the &gcov; tool you obtain
+a line-by-line break-down of how often each line within the original source file
+was executed (or not) by the preceeding execution.
+ </para><para>
+First edit the &Makefile; to add the necessary flags:
+  <programlisting>
+.PHONY: all clean
+ALL = bsort
+<command>CFLAGS = -fprofile-arcs -ftest-coverage</command>
+
+all: $(ALL)
+clean::
+    $(RM) $(ALL)
+  </programlisting>
+ </para><para>
+Then compile, and run (as normal):
+  <screen>
+$ <command>make</command>
+cc -fprofile-arcs -ftest-coverage    bsort.c   -o bsort
+
+$ <command>./bsort</command>
+start: (15 26 21 12 27 10 11 12 1 24 31 8 18 19 28 8 13 28 26 20 1 17 7 12 1 31 23 5 2 1 31 17)
+  end: (1 1 1 1 2 5 7 8 8 10 11 12 12 12 13 15 17 17 18 19 20 21 23 24 26 26 27 28 28 31 31 31)
+swaps: 267
+  </screen>
+ </para><para>
+But now when we look at the directory's contents:
+  <screen>
+$ <command>ls</command>
+Makefile  bsort  bsort.c  bsort.gcda  bsort.gcno
+  </screen>
+ </para><para>
+The <command>./bsort</command> binary that was run has created two files:
+<filename>bsort.gcda</filename> and <filename>bsort.gcno</filename>.
+These files contain all the coverage data from the latest execution.
+Unfortunately these files are binary:
+  <screen>
+$ <command>file bsort.gcda</command>
+bsort.gcda: data
+$ <command>file bsort.gcno</command>
+bsort.gcno: data
+  </screen>
+ </para><para>
+The &gcov; tool is used to convert this data into something that is (more)
+human readable:
+  <screen>
+$ <command>gcov bsort.c</command>
+File 'bsort.c'
+Lines executed:100.00% of 37
+bsort.c:creating 'bsort.c.gcov'
+  </screen>
+ </para><para>
+Here's what <filename>bsort.c.gcov</filename> looks like:
+  <screen>
+        -:    0:Source:bsort.c
+        -:    0:Graph:bsort.gcno
+        -:    0:Data:bsort.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Copyright (C) 2011  Trevor Woerner
+        -:    3: */
+        -:    4:
+        -:    5:#include &lt;stdio.h>
+        -:    6:#include &lt;stdbool.h>
+        -:    7:#include &lt;stdlib.h>
+        -:    8:#include &lt;time.h>
+        -:    9:
+        -:   10:#define ARRSZ 32
+        -:   11:
+        -:   12:static void randomize (int arr[], unsigned sz);
+        -:   13:static unsigned bsort (int arr[], unsigned sz);
+        -:   14:static void print_array (int arr[], unsigned sz);
+        -:   15:
+        -:   16:int
+        1:   17:main (void)
+        -:   18:{
+        -:   19:	int arr[ARRSZ];
+        -:   20:	unsigned swaps;
+        -:   21:
+        1:   22:	randomize (arr, ARRSZ);
+        -:   23:
+        1:   24:	printf ("start: ");
+        1:   25:	print_array (arr, ARRSZ);
+        -:   26:
+        1:   27:	swaps = bsort (arr, ARRSZ);
+        -:   28:
+        1:   29:	printf ("  end: ");
+        1:   30:	print_array (arr, ARRSZ);
+        -:   31:
+        1:   32:	printf ("swaps: %u\n", swaps);
+        -:   33:
+        1:   34:	return 0;
+        -:   35:}
+        -:   36:
+        -:   37:static void
+        1:   38:randomize (int arr[], unsigned sz)
+        -:   39:{
+        -:   40:	time_t now;
+        -:   41:	unsigned i;
+        -:   42:
+        1:   43:	now = time (NULL);
+        1:   44:	srand ((unsigned int)now);
+        -:   45:
+       33:   46:	for (i=0; i&lt;sz; ++i)
+       32:   47:		arr[i] = rand () % sz;
+        1:   48:}
+        -:   49:
+        -:   50:static unsigned
+        1:   51:bsort (int arr[], unsigned sz)
+        -:   52:{
+        -:   53:	unsigned i, j;
+        -:   54:	int tmp;
+        -:   55:	bool swaps;
+        1:   56:	unsigned swapCnt = 0;
+        -:   57:
+       27:   58:	for (i=(sz-1); i>0; --i) {
+       27:   59:		swaps = false;
+      513:   60:		for (j=0; j&lt;i; ++j) {
+      486:   61:			if (arr[j] > arr[j+1]) {
+      267:   62:				swaps = true;
+      267:   63:				++swapCnt;
+      267:   64:				tmp = arr[j];
+      267:   65:				arr[j] = arr[j+1];
+      267:   66:				arr[j+1] = tmp;
+        -:   67:			}
+        -:   68:		}
+       27:   69:		if (!swaps)
+        1:   70:			break;
+        -:   71:	}
+        -:   72:
+        1:   73:	return swapCnt;
+        -:   74:}
+        -:   75:
+        -:   76:static void
+        2:   77:print_array (int arr[], unsigned sz)
+        -:   78:{
+        -:   79:	unsigned i;
+        -:   80:
+        2:   81:	printf ("(");
+       66:   82:	for (i=0; i&lt;sz; ++i) {
+       64:   83:		printf ("%u", arr[i]);
+       64:   84:		if (i != (sz - 1))
+       62:   85:			printf (" ");
+        -:   86:	}
+        2:   87:	printf (")\n");
+        2:   88:}
+  </screen>
+ </para><para>
+ </para><para>
+The output contains 3 main columns separated by colons:
+ <orderedlist>
+  <listitem><para>
+A count of the number of times the given line was executed. A <literal>-</literal>
+indicates a line with no executable code (e.g. a declaration).
+  </para></listitem>
+  <listitem><para>
+The line number.
+  </para></listitem>
+  <listitem><para>
+The code.
+  </para></listitem>
+ </orderedlist>
+ </para><para>
+<note>
+ <para>
+The specific number of times each line is executed, especially in the
+<function>bsort()</function> function, depends on the initial data, which is random.
+Therefore the numbers you get are likely to be slightly different than
+what is shown here.
+ </para><para>
+&gcov; added a header at the start of the output which isn't part of the original code.
+ </para><para>
+Notice in the header that a count of the number of runs is given.
+More runs accumulates more data. To reset simply delete the
+<filename>*.gcda</filename> file before running the binary again.
+ </para>
+</note>
+ </para><para>
+Personally I prefer to provide the <command>-b</command> option to &gcov; so that it
+will also report on the number of times various branches are taken.
+  <screen>
+$ <command>gcov -b bsort.c</command>
+File 'bsort.c'
+Lines executed:100.00% of 37
+Branches executed:100.00% of 14
+Taken at least once:92.86% of 14
+Calls executed:100.00% of 14
+bsort.c:creating 'bsort.c.gcov'
+  </screen>
+ </para><para>
+This produces a slightly more verbose output:
+  <screen>
+        -:    0:Source:bsort.c
+        -:    0:Graph:bsort.gcno
+        -:    0:Data:bsort.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:/*
+        -:    2: * Copyright (C) 2011  Trevor Woerner
+        -:    3: */
+        -:    4:
+        -:    5:#include &lt;stdio.h>
+        -:    6:#include &lt;stdbool.h>
+        -:    7:#include &lt;stdlib.h>
+        -:    8:#include &lt;time.h>
+        -:    9:
+        -:   10:#define ARRSZ 32
+        -:   11:
+        -:   12:static void randomize (int arr[], unsigned sz);
+        -:   13:static unsigned bsort (int arr[], unsigned sz);
+        -:   14:static void print_array (int arr[], unsigned sz);
+        -:   15:
+        -:   16:int
+function main called 1 returned 100% blocks executed 100%
+        1:   17:main (void)
+        -:   18:{
+        -:   19:	int arr[ARRSZ];
+        -:   20:	unsigned swaps;
+        -:   21:
+        1:   22:	randomize (arr, ARRSZ);
+call    0 returned 100%
+        -:   23:
+        1:   24:	printf ("start: ");
+call    0 returned 100%
+        1:   25:	print_array (arr, ARRSZ);
+call    0 returned 100%
+        -:   26:
+        1:   27:	swaps = bsort (arr, ARRSZ);
+call    0 returned 100%
+        -:   28:
+        1:   29:	printf ("  end: ");
+call    0 returned 100%
+        1:   30:	print_array (arr, ARRSZ);
+call    0 returned 100%
+        -:   31:
+        1:   32:	printf ("swaps: %u\n", swaps);
+call    0 returned 100%
+        -:   33:
+        1:   34:	return 0;
+        -:   35:}
+        -:   36:
+        -:   37:static void
+function randomize called 1 returned 100% blocks executed 100%
+        1:   38:randomize (int arr[], unsigned sz)
+        -:   39:{
+        -:   40:	time_t now;
+        -:   41:	unsigned i;
+        -:   42:
+        1:   43:	now = time (NULL);
+call    0 returned 100%
+        1:   44:	srand ((unsigned int)now);
+call    0 returned 100%
+        -:   45:
+       33:   46:	for (i=0; i&lt;sz; ++i)
+branch  0 taken 97%
+branch  1 taken 3% (fallthrough)
+       32:   47:		arr[i] = rand () % sz;
+call    0 returned 100%
+        1:   48:}
+        -:   49:
+        -:   50:static unsigned
+function bsort called 1 returned 100% blocks executed 100%
+        1:   51:bsort (int arr[], unsigned sz)
+        -:   52:{
+        -:   53:	unsigned i, j;
+        -:   54:	int tmp;
+        -:   55:	bool swaps;
+        1:   56:	unsigned swapCnt = 0;
+        -:   57:
+       24:   58:	for (i=(sz-1); i>0; --i) {
+branch  0 taken 100%
+branch  1 taken 0% (fallthrough)
+       24:   59:		swaps = false;
+      492:   60:		for (j=0; j&lt;i; ++j) {
+branch  0 taken 95%
+branch  1 taken 5% (fallthrough)
+      468:   61:			if (arr[j] > arr[j+1]) {
+branch  0 taken 54% (fallthrough)
+branch  1 taken 46%
+      251:   62:				swaps = true;
+      251:   63:				++swapCnt;
+      251:   64:				tmp = arr[j];
+      251:   65:				arr[j] = arr[j+1];
+      251:   66:				arr[j+1] = tmp;
+        -:   67:			}
+        -:   68:		}
+       24:   69:		if (!swaps)
+branch  0 taken 4% (fallthrough)
+branch  1 taken 96%
+        1:   70:			break;
+        -:   71:	}
+        -:   72:
+        1:   73:	return swapCnt;
+        -:   74:}
+        -:   75:
+        -:   76:static void
+function print_array called 2 returned 100% blocks executed 100%
+        2:   77:print_array (int arr[], unsigned sz)
+        -:   78:{
+        -:   79:	unsigned i;
+        -:   80:
+        2:   81:	printf ("(");
+call    0 returned 100%
+       66:   82:	for (i=0; i&lt;sz; ++i) {
+branch  0 taken 97%
+branch  1 taken 3% (fallthrough)
+       64:   83:		printf ("%u", arr[i]);
+call    0 returned 100%
+       64:   84:		if (i != (sz - 1))
+branch  0 taken 97% (fallthrough)
+branch  1 taken 3%
+       62:   85:			printf (" ");
+call    0 returned 100%
+        -:   86:	}
+        2:   87:	printf (")\n");
+call    0 returned 100%
+        2:   88:}
+  </screen>
+ </para><para>
+Alternatively, in order to better visualize the code coverage,
+the output from &gcov; could be run through the &gcov2html-check;
+utility to generate an <filename>*.html</filename> file of the source code where
+the colours of the individual lines indicates the information conveyed in the
+<filename>bsort.c.gcov</filename> file visually.
+  <screen>
+$ <command>gcov2html-check -a bsort.c.gcov</command>
+  </screen>
+  <graphic fileref="html.png">
+ </para>
+</chapter>
+
+<chapter id="chk"><title>Check</title>
+ <para>
+Quoting from the <ulink url="http://check.sourceforge.net">website</ulink>:
+  <blockquote><para>
+&check; is a unit testing framework for C.
+It features a simple interface for defining unit tests, putting little in the way of the developer.
+Tests are run in a separate address space, so &check; can catch both assertion failures
+and code errors that cause segmentation faults or other signals.
+  </para></blockquote>
+ </para>
+</chapter>
+
+<chapter id="auto"><title>Autotools</title>
+ <para>
+This section on the &autotools; will certainly not even try to be
+a tutorial or even a quick-start-guide to using the &autotools;. Some people really like
+the &autotools;, other people really dislike them; I think they're a great help and I use
+them quite frequently.
+ </para><para>
+When I first started programming most of my code would fit into a single <filename>*.c</filename>
+file so to compile it I would simply invoke &gcc; manually. Coding in one terminal then switching
+to another, pressing the "up" arrow, and hitting "enter" to re-perform the same compile procedure
+over and over was enough to do the job I needed for the coding I was doing.
+ </para><para>
+After a short while my projects started to get a little bit bigger and I started putting
+related parts of the code together into their own <filename>*.c</filename> files. Sometimes
+things even ended up in various <filename>*.h</filename> files as well. Simply recompiling
+everything each time is an option, but very quickly it starts making sense to attempt to
+automate the process. Automating the process with a simple &Makefile; is a great idea because
+the &make; tool can then keep track of the minimal number of components which need to be
+rebuilt as a result of the current set of changes to the source files.
+ </para><para>
+After even more time my projects got bigger, the coding effort was more substantial:
+some documentation gets added, some tests get added, a library is created for certain
+components, and the project is broken down into different subdirectories.
+After getting familiar with the code from other projects I got to a point where I wanted
+to be able to do a
+"<literal>make install</literal>", a "<literal>make uninstall</literal>", or even a
+"<literal>make check</literal>" to run my tests.
+At this point I also need to keep track of the binaries which are installed and keep them
+separate from the binaries that, say, perform the unit testing (and are not installed).
+I also need to keep track of which header files are private to the project (and therefore
+not installed) versus those which are installed so I can use them in other projects.
+ </para><para>
+It is at this point where the &autotools; step in and help make things easier. By following
+common conventions I only need to create meta-&Makefile;s which simply categorize the various
+source files and the &autotools; takes care of creating my &Makefile;s and
+<literal>./configure</literal> scripts for me. By simply telling the &autotools; system
+what (well-defined) role each file plays I get a set of very well complete &Makefile;s
+which contain a large number of common &make; targets.
+ </para><para>
+For the purposes of the documentation for this project (gcov2html-check) I'm only going to
+focus on the "<literal>make check</literal>" target. The "<literal>make check</literal>"
+target is used to cause the build system to compile and run <literal>check</literal> targets
+which, by convension, are programs/scripts you write to test your main application code
+in some way. You usually don't install <literal>check</literal> targets and you don't
+usually run your tests implicitly with the <literal>all</literal> target.
+ </para>
+</chapter>
+
+<chapter id="ch4"><title>Example</title>
+ <para>
  </para>
 </chapter>
 
