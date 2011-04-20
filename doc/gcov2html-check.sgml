@@ -43,16 +43,30 @@
  <para>
 <literal>Gcc</literal> comes with a code coverage tool called &gcov;.
 The output from &gcov; is a plain text file: detailed but dry. This project
-uses the output from &gcov; to colourize the original source code in
-<literal>html</literal> to allow the user to more quickly determine which
+uses the output from &gcov; to colourize the original source code (in
+<literal>html</literal>) which allows the user to more quickly determine which
 parts of the code are run, relatively, more or less often than others.
  </para><para>
-If you setup your build using the &autotools; and make use
-of the "<literal>make check</literal>" target, you can easily encorporate
-this <literal>gcov2html-check</literal> tool to provide <literal>html</literal>
-files of your source code showing unit and/or integration test coverage. If
-your application code is in C there is a unit test helper tool called
-&check; which this project assumes you are using.
+It can certainly be educational to instrument your application with coverage
+analysis enabled and run it in a deployed environment to see (under real scenarios)
+which lines of code are not reached, and how frequently each reached line of code is executed.
+However, in a deployed situation you're probably more interested in performance
+analysis (as opposed to simply coverage analysis) so the tool to use would be
+<literal>gprof</literal>. Coverage information is very valuable, though, while
+performing unit tests since the generated data allows you to determine
+how much of your application code is being tested (or, conversely, which code
+paths are not being tested).
+ </para><para>
+You can use this tool as part of your regular build system to generate the colourized
+coverage analysis when running your tests.
+If your build uses the &autotools; and makes use of the "<literal>make check</literal>"
+target, you can easily encorporate this <literal>gcov2html-check</literal> tool to provide
+<literal>html</literal> files of your source code showing unit and/or integration test coverage
+automatically.
+ </para><para>
+If your application code is in C there is a unit test helper tool called &check;.
+&gcov2html-check; also provides support for converting the XML output from the &check; tool
+into test results (in addition to the source code coverage colourization).
  </para>
 </chapter>
 
