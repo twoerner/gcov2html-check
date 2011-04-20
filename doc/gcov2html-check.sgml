@@ -580,20 +580,17 @@ $ <command>gcov2html-check bsort.c.gcov</command>
 <chapter id="exproj"><title>Example Project</title>
  <para>
 In order to better understand this project and create workable interfaces I also
-created another project in parallel, <literal>gcov2html-check-Example</literal>
-which is a consumer of the ideas of this project.
+created another project in parallel, <literal>gcov2html-check-Example</literal>,
+which demonstrates how to use the parts of this project.
 You can probably find that project close to wherever you found this project.
-If you'd like to follow along with the code I was working with as I wrote
-this project and its documentation I encourage you to checkout that
-project as well and have a look at it, and its revision history.
 Hopefully it can serve as a template should you wish to implement some of
-these ideas.
+the ideas in this document.
  </para><para>
 The <literal>gcov2html-check-Example</literal> project contains the code and
-support files discussed in this documentation and it also includes the example
-code from the &check; project transformed to use this tool (&gcov2html-check;).
-So when looking at the code, be aware there are multiple reasons for that
-example project above what's described here.
+support files discussed in this documentation. It also includes the example
+code from the &check; project transformed to use this (&gcov2html-check;) tool.
+Therefore, when looking at the <literal>gcov2html-check-Example</literal> project,
+be aware that it contains things above and beyond what are described here.
  </para>
 </chapter>
 
