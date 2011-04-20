@@ -58,7 +58,7 @@ your application code is in C there is a unit test helper tool called
 
 <chapter id="cs"><title>Code Sample</title>
  <para>
-In order, of course, to demonstrate the concepts in this document I will need some samle code.
+In order, of course, to demonstrate the concepts in this document I will need some sample code.
 It would be preferable to find code which has some sort of dynamic execution (so that different
 runs produce slightly different output, i.e. different colours) but which is
 easy to compile (doesn't require lots or any external libraries, other than the C library),
@@ -405,7 +405,7 @@ what is shown here.
 &gcov; added a header at the start of the output which isn't part of the original code.
  </para><para>
 Notice in the header that a count of the number of runs is given.
-More runs accumulates more data. To reset simply delete the
+More runs accumulates more data. To reset, simply delete the
 <filename>*.gcda</filename> file before running the binary again.
  </para>
 </note>
@@ -580,7 +580,7 @@ and code errors that cause segmentation faults or other signals.
 This section on the &autotools; will certainly not even try to be
 a tutorial or even a quick-start-guide to using the &autotools;. Some people really like
 the &autotools;, other people really dislike them; I think they're a great help and I use
-them quite frequently.
+them quite frequently when they are appropriate.
  </para><para>
 When I first started programming most of my code would fit into a single <filename>*.c</filename>
 file so to compile it I would simply invoke &gcc; manually. Coding in one terminal then switching
@@ -611,7 +611,7 @@ It is at this point where the &autotools; step in and help make things easier. B
 common conventions I only need to create meta-&Makefile;s which simply categorize the various
 source files and the &autotools; takes care of creating my &Makefile;s and
 <literal>./configure</literal> scripts for me. By simply telling the &autotools; system
-what (well-defined) role each file plays I get a set of very well complete &Makefile;s
+what (well-defined) role each file plays I get a set of very complete &Makefile;s
 which contain a large number of common &make; targets.
  </para><para>
 For the purposes of the documentation for this project (gcov2html-check) I'm only going to
