@@ -596,12 +596,11 @@ $ <command>gcov2html-check bsort.c.gcov</command>
 
 <chapter id="auto"><title>Autotools</title>
  <para>
-This section on the &autotools; will certainly not even try to be
-a tutorial or even a quick-start-guide to using the &autotools;. Some people really like
-the &autotools;, other people really dislike them; I think they're a great help and I use
-them quite frequently when they are appropriate.
+This chapter is not a tutorial on, or even a quick-start-guide to using, the &autotools;; it only
+describes how you would add &gcov2html-check; into an existing project which is
+already making use of the &autotools;.
  </para><para>
-When I first started programming most of my code would fit into a single <filename>*.c</filename>
+When I first started programming, most of my code would fit into a single <filename>*.c</filename>
 file so to compile it I would simply invoke &gcc; manually. Coding in one terminal then switching
 to another, pressing the "up" arrow, and hitting "enter" to re-perform the same compile procedure
 over and over was enough to do the job I needed for the coding I was doing.
@@ -611,7 +610,7 @@ related parts of the code together into their own <filename>*.c</filename> files
 things even ended up in various <filename>*.h</filename> files as well. Simply recompiling
 everything each time is an option, but very quickly it starts making sense to attempt to
 automate the process. Automating the process with a simple &Makefile; is a great idea because
-the &make; tool can then keep track of the minimal number of components which need to be
+the &make; tool can keep track of the minimal number of components which need to be
 rebuilt as a result of the current set of changes to the source files.
  </para><para>
 After even more time my projects got bigger, the coding effort was more substantial:
@@ -626,12 +625,50 @@ separate from the binaries that, say, perform the unit testing (and are not inst
 I also need to keep track of which header files are private to the project (and therefore
 not installed) versus those which are installed so I can use them in other projects.
  </para><para>
-It is at this point where the &autotools; step in and help make things easier. By following
-common conventions I only need to create meta-&Makefile;s which simply categorize the various
-source files and the &autotools; takes care of creating my &Makefile;s and
+It is at this point where the &autotools; step in and help make things easier.
+Coding all of the above in a straight &Makefile; (or recursive &Makefile;s) is
+certainly possible, but using the &autotools; makes everything easier.
+By following common conventions I need only create meta-&Makefile;s (which simply
+categorize the various source files) &autotools; takes care of creating my &Makefile;s and
 <literal>./configure</literal> scripts for me. By simply telling the &autotools; system
-what (well-defined) role each file plays I get a set of very complete &Makefile;s
+what well-defined role each file plays I get a set of very complete &Makefile;s
 which contain a large number of common &make; targets.
+ </para><para>
+I won't give the entire setup necessary to switch from a plain &Makefile; to the
+&autotools; system (see the <literal>gcov2html-check-Example</literal> project
+for that) but I will provide the <filename>Makefile.am</filename> that I used:
+  <programlisting>
+## Copyright (C) 2011  Trevor Woerner
+
+########################
+## src/Makefile.am
+########################
+SUBDIRS =
+bin_PROGRAMS = bsort
+  </programlisting>
+ </para><para>
+From this simple <filename>Makefile.am</filename> the &autotools; system generates a
+&Makefile; which provides a large number of basic targets such as:
+"<literal>make</literal>", "<literal>make clean</literal>", "<literal>make install</literal>",
+"<literal>make uninstall</literal>", "<literal>make dist</literal>",
+"<literal>make distcheck</literal>", and so on.
+ </para><para>
+There are a number of ways to add the ability to build a &gcov; enabled binary. I decided
+to implement it so two binaries are build: one with and one without &gcov;:
+  <programlisting>
+## Copyright (C) 2011  Trevor Woerner
+
+########################
+## src/Makefile.am
+########################
+SUBDIRS =
+bin_PROGRAMS = bsort gcov-bsort
+gcov_bsort_SOURCES = bsort.c
+gcov_bsort_CFLAGS = -fprofile-arcs -ftest-coverage
+
+clean-local:
+        $(RM) *gcno *gcda
+  </programlisting>
  </para>
 </chapter>
 
