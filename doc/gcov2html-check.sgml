@@ -563,15 +563,23 @@ $ <command>gcov2html-check -a bsort.c.gcov</command>
  </para>
 </chapter>
 
-<chapter id="chk"><title>Check</title>
+<chapter id="exproj"><title>Example Project</title>
  <para>
-Quoting from the <ulink url="http://check.sourceforge.net">website</ulink>:
-  <blockquote><para>
-&check; is a unit testing framework for C.
-It features a simple interface for defining unit tests, putting little in the way of the developer.
-Tests are run in a separate address space, so &check; can catch both assertion failures
-and code errors that cause segmentation faults or other signals.
-  </para></blockquote>
+In order to better understand this project and create workable interfaces I also
+created another project in parallel, <literal>gcov2html-check-Example</literal>
+which is a consumer of the ideas of this project.
+You can probably find that project close to wherever you found this project.
+If you'd like to follow along with the code I was working with as I wrote
+this project and its documentation I encourage you to checkout that
+project as well and have a look at it, and its revision history.
+Hopefully it can serve as a template should you wish to implement some of
+these ideas.
+ </para><para>
+The <literal>gcov2html-check-Example</literal> project contains the code and
+support files discussed in this documentation and it also includes the example
+code from the &check; project transformed to use this tool (&gcov2html-check;).
+So when looking at the code, be aware there are multiple reasons for that
+example project above what's described here.
  </para>
 </chapter>
 
@@ -620,11 +628,6 @@ target is used to cause the build system to compile and run <literal>check</lite
 which, by convension, are programs/scripts you write to test your main application code
 in some way. You usually don't install <literal>check</literal> targets and you don't
 usually run your tests implicitly with the <literal>all</literal> target.
- </para>
-</chapter>
-
-<chapter id="ch4"><title>Example</title>
- <para>
  </para>
 </chapter>
 
