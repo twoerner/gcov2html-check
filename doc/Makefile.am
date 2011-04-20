@@ -4,7 +4,6 @@
 ## sgml doc/Makefile.am
 ########################
 SUBDIRS = 
-.PHONY: pdf txt
 IMAGES = html.png
 EXTRA_DIST = gcov2html-check.sgml stylesheet.dsl $(IMAGES)
 if BUILDDOCS
@@ -17,14 +16,14 @@ sgml_txtdir = $(docbasedir)/txt
 stylesheet = $(srcdir)/stylesheet.dsl
 INST_IMAGES = $(addprefix $(top_srcdir)/doc/,$(IMAGES))
 
-index.html: gcov2html-check.sgml stylesheet.dsl $(IMAGES)
+index.html: gcov2html-check.sgml stylesheet.dsl $(INST_IMAGES)
 	$(RM) *.html *.htm
 	for image in $(INST_IMAGES); do \
 		$(INSTALL) "$$image" .; \
 	done
 	$(doc_html) -d '$(stylesheet)#html' $<
 
-gcov2html-check.pdf: gcov2html-check.sgml stylesheet.dsl $(IMAGES)
+gcov2html-check.pdf: gcov2html-check.sgml stylesheet.dsl $(INST_IMAGES)
 	for image in $(INST_IMAGES); do \
 		$(INSTALL) "$$image" .; \
 	done
