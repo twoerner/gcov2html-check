@@ -632,6 +632,18 @@ source files and the &autotools; takes care of creating my &Makefile;s and
 <literal>./configure</literal> scripts for me. By simply telling the &autotools; system
 what (well-defined) role each file plays I get a set of very complete &Makefile;s
 which contain a large number of common &make; targets.
+ </para>
+</chapter>
+
+<chapter id="chk"><title>Check</title>
+ <para>
+Quoting from the <ulink url="http://check.sourceforge.net">website</ulink>:
+  <blockquote><para>
+&check; is a unit testing framework for C.
+It features a simple interface for defining unit tests, putting little in the way of the developer.
+Tests are run in a separate address space, so &check; can catch both assertion failures
+and code errors that cause segmentation faults or other signals.
+  </para></blockquote>
  </para><para>
 For the purposes of the documentation for this project (gcov2html-check) I'm only going to
 focus on the "<literal>make check</literal>" target. The "<literal>make check</literal>"
