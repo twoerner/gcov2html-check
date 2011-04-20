@@ -222,6 +222,23 @@ clean::
  </para>
 </chapter>
 
+<chapter id="exproj"><title>Example Project</title>
+ <para>
+In order to better understand this project and create workable interfaces I also
+created another project in parallel, <literal>gcov2html-check-Example</literal>,
+which demonstrates how to use the parts of this project.
+You can probably find that project close to wherever you found this project.
+Hopefully it can serve as a template should you wish to implement some of
+the ideas in this document.
+ </para><para>
+The <literal>gcov2html-check-Example</literal> project contains the code and
+support files discussed in this documentation. It also includes the example
+code from the &check; project transformed to use this (&gcov2html-check;) tool.
+Therefore, when looking at the <literal>gcov2html-check-Example</literal> project,
+be aware that it contains things above and beyond what are described here.
+ </para>
+</chapter>
+
 <chapter id="gcov"><title>Gcov</title>
  <para>
 <ulink url="http://gcc.gnu.org/onlinedocs/gcc/Gcov.html"><literal>Gcov</literal></ulink>:
@@ -574,23 +591,6 @@ the colours of the individual lines indicates the information conveyed in the
 $ <command>gcov2html-check bsort.c.gcov</command>
   </screen>
   <graphic fileref="html.png">
- </para>
-</chapter>
-
-<chapter id="exproj"><title>Example Project</title>
- <para>
-In order to better understand this project and create workable interfaces I also
-created another project in parallel, <literal>gcov2html-check-Example</literal>,
-which demonstrates how to use the parts of this project.
-You can probably find that project close to wherever you found this project.
-Hopefully it can serve as a template should you wish to implement some of
-the ideas in this document.
- </para><para>
-The <literal>gcov2html-check-Example</literal> project contains the code and
-support files discussed in this documentation. It also includes the example
-code from the &check; project transformed to use this (&gcov2html-check;) tool.
-Therefore, when looking at the <literal>gcov2html-check-Example</literal> project,
-be aware that it contains things above and beyond what are described here.
  </para>
 </chapter>
 
