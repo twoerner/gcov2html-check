@@ -662,12 +662,12 @@ to implement it so two binaries are build: one with and one without &gcov;:
 ## src/Makefile.am
 ########################
 SUBDIRS =
-bin_PROGRAMS = bsort gcov-bsort
-gcov_bsort_SOURCES = bsort.c
-gcov_bsort_CFLAGS = -fprofile-arcs -ftest-coverage
+bin_PROGRAMS = bsort <command>gcov-bsort</command>
+<command>gcov_bsort_SOURCES = bsort.c</command>
+<command>gcov_bsort_CFLAGS = -fprofile-arcs -ftest-coverage</command>
 
-clean-local:
-        $(RM) *gcno *gcda
+<command>clean-local:</command>
+        <command>$(RM) *gcno *gcda</command>
   </programlisting>
  </para>
 </chapter>
