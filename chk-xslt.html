@@ -1,0 +1,240 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Test Report</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="gcov2html-check"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Check"
+HREF="chk.html"><LINK
+REL="PREVIOUS"
+TITLE="HTML-izing Test Coverage"
+HREF="chk-gcov.html"></HEAD
+><BODY
+CLASS="SECT1"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>gcov2html-check</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="chk-gcov.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 6. Check</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+>&nbsp;</TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="CHK-XSLT"
+>6.4. Test Report</A
+></H1
+><P
+><TT
+CLASS="LITERAL"
+>Check</TT
+> also comes with another nifty feature in that it can generate a report
+in XML. Using an XSLT stylesheet I can convert the XML into HTML as part of the build:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;## Copyright (C) 2011  Trevor Woerner
+   &nbsp;
+   &nbsp;########################
+   &nbsp;## tests/Makefile.am
+  5&nbsp;########################
+   &nbsp;SUBDIRS =
+   &nbsp;AM_MAKEFLAGS = -k
+   &nbsp;AM_CFLAGS = -Wall -Werror -Wextra -Wconversion -Wreturn-type -Wstrict-prototypes \
+   &nbsp;    -fprofile-arcs -ftest-coverage @CHECK_CFLAGS@ -I$(top_srcdir)/lib
+ 10&nbsp;LDADD = @CHECK_LIBS@
+   &nbsp;
+   &nbsp;if COND_HAVE_CHECK
+   &nbsp;TESTS = check_bsort
+   &nbsp;noinst_PROGRAMS = check_bsort
+ 15&nbsp;check_bsort_SOURCES = check_bsort.c $(top_srcdir)/src/bsort.c
+   &nbsp;check_bsort_CFLAGS = -DUNDER_TEST $(AM_CFLAGS) -I$(top_srcdir)/src
+   &nbsp;
+   &nbsp;check-local:
+   &nbsp;        if test x$(HTML_CHECK_RESULT) = xtrue; then \
+ 20&nbsp;                $(gcov2html_check_BINDIR)/getgcov.sh check_bsort-bsort.c CheckLog_bsort.xml; \
+   &nbsp;<B
+CLASS="COMMAND"
+>                $(XSLTPROC) $(gcov2html_check_PKGDATADIR)/CheckLog.xsl CheckLog*xml &#62; CheckLog.html; \</B
+>
+   &nbsp;                if test x$(GCOV2HTML) != xfalse; then \
+   &nbsp;                        $(GCOV2HTML) bsort.c.gcov; \
+   &nbsp;                        $(INSTALL) $(gcov2html_check_PKGDATADIR)/gcov2html-check.png .; \
+ 25&nbsp;                fi \
+   &nbsp;        fi
+   &nbsp;
+   &nbsp;endif
+   &nbsp;
+ 30&nbsp;clean-local::
+   &nbsp;    $(RM) *png *html CheckLog*txt CheckLog*xml *.gc*
+   &nbsp;  </PRE
+></TD
+></TR
+></TABLE
+>
+ </P
+><P
+>Now you'll end up with a <TT
+CLASS="FILENAME"
+>CheckLog.html</TT
+> which summarizes the tests
+that were run
+  <P
+><IMG
+SRC="summary.png"></P
+>
+and a <TT
+CLASS="FILENAME"
+>bsort.c.html</TT
+> that shows how well your tests
+covered your source code.
+  <P
+><IMG
+SRC="coverage.png"></P
+>
+ </P
+><P
+><DIV
+CLASS="NOTE"
+><P
+></P
+><TABLE
+CLASS="NOTE"
+WIDTH="100%"
+BORDER="0"
+><TR
+><TD
+WIDTH="25"
+ALIGN="CENTER"
+VALIGN="TOP"
+><IMG
+SRC="./images/note.gif"
+HSPACE="5"
+ALT="Note"></TD
+><TD
+ALIGN="LEFT"
+VALIGN="TOP"
+><P
+>Make sure to have a look at the <TT
+CLASS="LITERAL"
+>gcov2html-check-Example</TT
+> project
+for the complete code and build configuration.</P
+></TD
+></TR
+></TABLE
+></DIV
+>
+ </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="chk-gcov.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>&nbsp;</TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>HTML-izing Test Coverage</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="chk.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>&nbsp;</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

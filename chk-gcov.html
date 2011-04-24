@@ -1,0 +1,221 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>HTML-izing Test Coverage</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="gcov2html-check"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Check"
+HREF="chk.html"><LINK
+REL="PREVIOUS"
+TITLE="Adding Tests"
+HREF="chk-test.html"><LINK
+REL="NEXT"
+TITLE="Test Report"
+HREF="chk-xslt.html"></HEAD
+><BODY
+CLASS="SECT1"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>gcov2html-check</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="chk-test.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 6. Check</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="chk-xslt.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="CHK-GCOV"
+>6.3. HTML-izing Test Coverage</A
+></H1
+><P
+>To add in the automatic use of <TT
+CLASS="LITERAL"
+>gcov2html-check</TT
+> into the build, edit the
+<TT
+CLASS="FILENAME"
+>Makefile.am</TT
+> to be:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;## Copyright (C) 2011  Trevor Woerner
+   &nbsp;
+   &nbsp;########################
+   &nbsp;## tests/Makefile.am
+  5&nbsp;########################
+   &nbsp;SUBDIRS = 
+   &nbsp;AM_MAKEFLAGS = -k
+   &nbsp;AM_CFLAGS = -Wall -Werror -Wextra -Wconversion -Wreturn-type -Wstrict-prototypes \
+   &nbsp;	-fprofile-arcs -ftest-coverage @CHECK_CFLAGS@ -I$(top_srcdir)/lib
+ 10&nbsp;LDADD = @CHECK_LIBS@
+   &nbsp;
+   &nbsp;if COND_HAVE_CHECK
+   &nbsp;TESTS = check_bsort
+   &nbsp;noinst_PROGRAMS = check_bsort
+ 15&nbsp;check_bsort_SOURCES = check_bsort.c $(top_srcdir)/src/bsort.c
+   &nbsp;check_bsort_CFLAGS = -DUNDER_TEST $(AM_CFLAGS) -I$(top_srcdir)/src
+   &nbsp;
+   &nbsp;<B
+CLASS="COMMAND"
+>check-local:</B
+>
+   &nbsp;<B
+CLASS="COMMAND"
+>        if test x$(HTML_CHECK_RESULT) = xtrue; then \</B
+>
+ 20&nbsp;<B
+CLASS="COMMAND"
+>                $(gcov2html_check_BINDIR)/getgcov.sh check_bsort-bsort.c CheckLog_bsort.xml; \</B
+>
+   &nbsp;<B
+CLASS="COMMAND"
+>                if test x$(GCOV2HTML) != xfalse; then \</B
+>
+   &nbsp;<B
+CLASS="COMMAND"
+>                        $(GCOV2HTML) bsort.c.gcov; \</B
+>
+   &nbsp;<B
+CLASS="COMMAND"
+>                        $(INSTALL) $(gcov2html_check_PKGDATADIR)/gcov2html-check.png .; \</B
+>
+   &nbsp;<B
+CLASS="COMMAND"
+>                fi \</B
+>
+ 25&nbsp;<B
+CLASS="COMMAND"
+>        fi</B
+>
+   &nbsp;
+   &nbsp;endif
+   &nbsp;
+   &nbsp;clean-local::
+ 30&nbsp;	$(RM) *png *html CheckLog*txt CheckLog*xml *.gc*
+   &nbsp;  </PRE
+></TD
+></TR
+></TABLE
+>
+ </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="chk-test.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="chk-xslt.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Adding Tests</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="chk.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Test Report</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

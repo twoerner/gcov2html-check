@@ -1,0 +1,276 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Code Sample</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="gcov2html-check"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Motivation"
+HREF="mot.html"><LINK
+REL="NEXT"
+TITLE="Example Project"
+HREF="exproj.html"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>gcov2html-check</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="mot.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="exproj.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="CS"
+></A
+>Chapter 2. Code Sample</H1
+><P
+>In order, of course, to demonstrate the concepts in this document I will need some sample code.
+It would be preferable to find code which has some sort of dynamic execution (so that different
+runs produce slightly different output, i.e. different colours) but which is
+easy to compile (doesn't require lots or any external libraries, other than the C library),
+easy to understand (preferably something any developer should easily understand),
+easy to test (contains multiple, logical functions),
+and isn't hard for the user to run (preferably no command-line arguments).
+ </P
+><P
+>I decided to write a quick-and-dirty bubble sort implementation in C.
+My implementation starts off looking like this:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;/*
+   &nbsp; * Copyright (C) 2011  Trevor Woerner
+   &nbsp; */
+   &nbsp;
+  5&nbsp;#include &#60;stdio.h&#62;
+   &nbsp;#include &#60;stdlib.h&#62;
+   &nbsp;#include &#60;time.h&#62;
+   &nbsp;
+   &nbsp;#define ARRSZ 32
+ 10&nbsp;
+   &nbsp;static void randomize (int arr[], size_t sz);
+   &nbsp;static unsigned bsort (int arr[], size_t sz);
+   &nbsp;static void print_array (int arr[], size_t sz);
+   &nbsp;
+ 15&nbsp;int
+   &nbsp;main (void)
+   &nbsp;{
+   &nbsp;	static int arr[ARRSZ];
+   &nbsp;	unsigned swaps;
+ 20&nbsp;
+   &nbsp;	randomize (arr, ARRSZ);
+   &nbsp;
+   &nbsp;	printf ("start: ");
+   &nbsp;	print_array (arr, ARRSZ);
+ 25&nbsp;
+   &nbsp;	swaps = bsort (arr, ARRSZ);
+   &nbsp;
+   &nbsp;	printf ("  end: ");
+   &nbsp;	print_array (arr, ARRSZ);
+ 30&nbsp;
+   &nbsp;	printf ("swaps: %u\n", swaps);
+   &nbsp;
+   &nbsp;	return 0;
+   &nbsp;}
+ 35&nbsp;
+   &nbsp;static void
+   &nbsp;randomize (int arr[], size_t sz)
+   &nbsp;{
+   &nbsp;	time_t now;
+ 40&nbsp;	size_t i;
+   &nbsp;
+   &nbsp;	now = time (NULL);
+   &nbsp;	srand ((unsigned int)now);
+   &nbsp;
+ 45&nbsp;	for (i=0; i&#60;sz; ++i)
+   &nbsp;		arr[i] = rand () % (int)sz;
+   &nbsp;}
+   &nbsp;
+   &nbsp;static unsigned
+ 50&nbsp;bsort (int arr[], size_t sz)
+   &nbsp;{
+   &nbsp;	size_t unsortEnd, i;
+   &nbsp;	int tmp;
+   &nbsp;	unsigned swapCnt = 0;
+ 55&nbsp;	size_t lastSwap;
+   &nbsp;
+   &nbsp;	for (unsortEnd=(sz-1); unsortEnd&#62;0; --unsortEnd) {
+   &nbsp;		lastSwap = 0;
+   &nbsp;		for (i=0; i&#60;unsortEnd; ++i) {
+ 60&nbsp;			if (arr[i] &#62; arr[i+1]) {
+   &nbsp;				++swapCnt;
+   &nbsp;				lastSwap = i + 1;
+   &nbsp;
+   &nbsp;				tmp = arr[i];
+ 65&nbsp;				arr[i] = arr[i+1];
+   &nbsp;				arr[i+1] = tmp;
+   &nbsp;			}
+   &nbsp;		}
+   &nbsp;		if (lastSwap == 0)
+ 70&nbsp;			break;
+   &nbsp;		unsortEnd = lastSwap;
+   &nbsp;	}
+   &nbsp;
+   &nbsp;	return swapCnt;
+ 75&nbsp;}
+   &nbsp;
+   &nbsp;static void
+   &nbsp;print_array (int arr[], size_t sz)
+   &nbsp;{
+ 80&nbsp;	size_t i;
+   &nbsp;
+   &nbsp;	printf ("(");
+   &nbsp;	for (i=0; i&#60;sz; ++i) {
+   &nbsp;		printf ("%u", arr[i]);
+ 85&nbsp;		if (i != (sz - 1))
+   &nbsp;			printf (" ");
+   &nbsp;	}
+   &nbsp;	printf (")\n");
+   &nbsp;}
+ 90&nbsp;  </PRE
+></TD
+></TR
+></TABLE
+>
+ </P
+><P
+>For the initial pass I'll use the following simple <TT
+CLASS="LITERAL"
+>Makefile</TT
+>:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;.PHONY: all clean
+   &nbsp;ALL = bsort
+   &nbsp;
+   &nbsp;all: $(ALL)
+  5&nbsp;clean::
+   &nbsp;    $(RM) $(ALL)
+   &nbsp;  </PRE
+></TD
+></TR
+></TABLE
+>
+ </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="mot.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="exproj.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Motivation</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Example Project</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

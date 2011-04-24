@@ -1,77 +1,158 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset='utf-8'>
-
-  <title>twoerner/gcov2html-check @ GitHub</title>
-
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #ce0e13;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #31f1ec; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #31f1ec; }
-    h3 { text-align: center; color: #31f1ec; }
-    a { color: #31f1ec; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
-
-<body>
-  <a href="http://github.com/twoerner/gcov2html-check"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
-
-  <div id="container">
-
-    <div class="download">
-      <a href="http://github.com/twoerner/gcov2html-check/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/twoerner/gcov2html-check/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
-
-    <h1><a href="http://github.com/twoerner/gcov2html-check">gcov2html-check</a>
-      <span class="small">by <a href="http://github.com/twoerner">twoerner</a></span></h1>
-
-    <div class="description">
-      A gcov visualization tool which works with the 'check' unit test framework for C code.
-    </div>
-
-    <h2>Authors</h2>
-<p>Trevor Woerner (twoerner@gmail.com)<br/><br/>      </p>
-<h2>Contact</h2>
-<p>Trevor Woerner (twoerner@gmail.com)<br/>      </p>
-
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/twoerner/gcov2html-check/zipball/master">zip</a> or
-      <a href="http://github.com/twoerner/gcov2html-check/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/twoerner/gcov2html-check</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/twoerner/gcov2html-check">twoerner/gcov2html-check</a>
-    </div>
-
-  </div>
-
-  
-</body>
-</html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>gcov2html-check</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="NEXT"
+TITLE="Motivation"
+HREF="mot.html"></HEAD
+><BODY
+CLASS="BOOK"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="BOOK"
+><A
+NAME="INDEX"
+></A
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="TITLE"
+><A
+NAME="AEN2"
+>gcov2html-check</A
+></H1
+><H3
+CLASS="AUTHOR"
+><A
+NAME="AEN5"
+></A
+>Trevor Woerner</H3
+><P
+CLASS="COPYRIGHT"
+>Copyright &copy; 2006-2011 Trevor Woerner</P
+><HR></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+>1. <A
+HREF="mot.html"
+>Motivation</A
+></DT
+><DT
+>2. <A
+HREF="cs.html"
+>Code Sample</A
+></DT
+><DT
+>3. <A
+HREF="exproj.html"
+>Example Project</A
+></DT
+><DT
+>4. <A
+HREF="gcov.html"
+>Gcov</A
+></DT
+><DT
+>5. <A
+HREF="auto.html"
+>Autotools</A
+></DT
+><DT
+>6. <A
+HREF="chk.html"
+>Check</A
+></DT
+><DD
+><DL
+><DT
+>6.1. <A
+HREF="chk.html#CHK-PREP"
+>Preparation</A
+></DT
+><DT
+>6.2. <A
+HREF="chk-test.html"
+>Adding Tests</A
+></DT
+><DT
+>6.3. <A
+HREF="chk-gcov.html"
+>HTML-izing Test Coverage</A
+></DT
+><DT
+>6.4. <A
+HREF="chk-xslt.html"
+>Test Report</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="mot.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Motivation</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

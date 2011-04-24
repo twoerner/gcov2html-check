@@ -1,0 +1,369 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Autotools</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="gcov2html-check"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="Gcov"
+HREF="gcov.html"><LINK
+REL="NEXT"
+TITLE="Check"
+HREF="chk.html"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>gcov2html-check</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="gcov.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="chk.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="AUTO"
+></A
+>Chapter 5. Autotools</H1
+><P
+>This chapter is not a tutorial on, or even a quick-start-guide to using, the <TT
+CLASS="LITERAL"
+>autotools</TT
+>; it only
+describes how you would add <TT
+CLASS="LITERAL"
+>gcov2html-check</TT
+> into an existing project which is
+already making use of the <TT
+CLASS="LITERAL"
+>autotools</TT
+>.
+ </P
+><P
+>When I first started programming, most of my code would fit into a single <TT
+CLASS="FILENAME"
+>*.c</TT
+>
+file so to compile it I would simply invoke <TT
+CLASS="LITERAL"
+>gcc</TT
+> manually. Coding in one terminal then switching
+to another, pressing the "up" arrow, and hitting "enter" to re-perform the same compile procedure
+over and over was enough to do the job I needed for the coding I was doing.
+ </P
+><P
+>After a short while my projects started to get a little bit bigger and I started putting
+related parts of the code together into their own <TT
+CLASS="FILENAME"
+>*.c</TT
+> files. Sometimes
+things even ended up in various <TT
+CLASS="FILENAME"
+>*.h</TT
+> files as well. Simply recompiling
+everything each time is an option, but very quickly it starts making sense to attempt to
+automate the process. Automating the process with a simple <TT
+CLASS="LITERAL"
+>Makefile</TT
+> is a great idea because
+the <TT
+CLASS="LITERAL"
+>make</TT
+> tool can keep track of the minimal number of components which need to be
+rebuilt as a result of the current set of changes to the source files.
+ </P
+><P
+>After even more time my projects got bigger, the coding effort was more substantial:
+some documentation gets added, some tests get added, a library is created for certain
+components, and the project is broken down into different subdirectories.
+After getting familiar with the code from other projects I got to a point where I wanted
+to be able to do a
+"<TT
+CLASS="LITERAL"
+>make install</TT
+>", a "<TT
+CLASS="LITERAL"
+>make uninstall</TT
+>", or even a
+"<TT
+CLASS="LITERAL"
+>make check</TT
+>" to run my tests.
+At this point I also need to keep track of the binaries which are installed and keep them
+separate from the binaries that, say, perform the unit testing (and are not installed).
+I also need to keep track of which header files are private to the project (and therefore
+not installed) versus those which are installed so I can use them in other projects.
+ </P
+><P
+>It is at this point where the <TT
+CLASS="LITERAL"
+>autotools</TT
+> step in and help make things easier.
+Coding all of the above in a straight <TT
+CLASS="LITERAL"
+>Makefile</TT
+> (or recursive <TT
+CLASS="LITERAL"
+>Makefile</TT
+>s) is
+certainly possible, but using the <TT
+CLASS="LITERAL"
+>autotools</TT
+> makes everything easier.
+By following common conventions I need only create meta-<TT
+CLASS="LITERAL"
+>Makefile</TT
+>s (which simply
+categorize the various source files) <TT
+CLASS="LITERAL"
+>autotools</TT
+> takes care of creating my <TT
+CLASS="LITERAL"
+>Makefile</TT
+>s and
+<TT
+CLASS="LITERAL"
+>./configure</TT
+> scripts for me. By simply telling the <TT
+CLASS="LITERAL"
+>autotools</TT
+> system
+what well-defined role each file plays I get a set of very complete <TT
+CLASS="LITERAL"
+>Makefile</TT
+>s
+which contain a large number of common <TT
+CLASS="LITERAL"
+>make</TT
+> targets.
+ </P
+><P
+>I won't give the entire setup necessary to switch from a plain <TT
+CLASS="LITERAL"
+>Makefile</TT
+> to the
+<TT
+CLASS="LITERAL"
+>autotools</TT
+> system (see the <TT
+CLASS="LITERAL"
+>gcov2html-check-Example</TT
+> project
+for that) but I will provide the <TT
+CLASS="FILENAME"
+>Makefile.am</TT
+> that I used:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;## Copyright (C) 2011  Trevor Woerner
+   &nbsp;
+   &nbsp;########################
+   &nbsp;## src/Makefile.am
+  5&nbsp;########################
+   &nbsp;SUBDIRS =
+   &nbsp;bin_PROGRAMS = bsort
+   &nbsp;  </PRE
+></TD
+></TR
+></TABLE
+>
+ </P
+><P
+>From this simple <TT
+CLASS="FILENAME"
+>Makefile.am</TT
+> the <TT
+CLASS="LITERAL"
+>autotools</TT
+> system generates a
+<TT
+CLASS="LITERAL"
+>Makefile</TT
+> which provides a large number of basic targets such as:
+"<TT
+CLASS="LITERAL"
+>make</TT
+>", "<TT
+CLASS="LITERAL"
+>make clean</TT
+>", "<TT
+CLASS="LITERAL"
+>make install</TT
+>",
+"<TT
+CLASS="LITERAL"
+>make uninstall</TT
+>", "<TT
+CLASS="LITERAL"
+>make dist</TT
+>",
+"<TT
+CLASS="LITERAL"
+>make distcheck</TT
+>", and so on.
+ </P
+><P
+>There are a number of ways to add the ability to build a <TT
+CLASS="LITERAL"
+>gcov</TT
+> enabled binary. I decided
+to implement it so two binaries are build: one with and one without <TT
+CLASS="LITERAL"
+>gcov</TT
+>:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;## Copyright (C) 2011  Trevor Woerner
+   &nbsp;
+   &nbsp;########################
+   &nbsp;## src/Makefile.am
+  5&nbsp;########################
+   &nbsp;SUBDIRS =
+   &nbsp;bin_PROGRAMS = bsort <B
+CLASS="COMMAND"
+>gcov-bsort</B
+>
+   &nbsp;<B
+CLASS="COMMAND"
+>gcov_bsort_SOURCES = bsort.c</B
+>
+   &nbsp;<B
+CLASS="COMMAND"
+>gcov_bsort_CFLAGS = -fprofile-arcs -ftest-coverage</B
+>
+ 10&nbsp;
+   &nbsp;<B
+CLASS="COMMAND"
+>clean-local:</B
+>
+   &nbsp;        <B
+CLASS="COMMAND"
+>$(RM) *gcno *gcda</B
+>
+   &nbsp;  </PRE
+></TD
+></TR
+></TABLE
+>
+ </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="gcov.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="chk.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Gcov</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Check</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

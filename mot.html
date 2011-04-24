@@ -1,0 +1,206 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Motivation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="gcov2html-check"
+HREF="index.html"><LINK
+REL="PREVIOUS"
+TITLE="gcov2html-check"
+HREF="index.html"><LINK
+REL="NEXT"
+TITLE="Code Sample"
+HREF="cs.html"></HEAD
+><BODY
+CLASS="CHAPTER"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>gcov2html-check</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="index.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+></TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="cs.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="CHAPTER"
+><H1
+><A
+NAME="MOT"
+></A
+>Chapter 1. Motivation</H1
+><P
+><TT
+CLASS="LITERAL"
+>Gcc</TT
+> comes with a code coverage tool called <TT
+CLASS="LITERAL"
+>gcov</TT
+>.
+The output from <TT
+CLASS="LITERAL"
+>gcov</TT
+> is a plain text file: detailed but dry. This project
+uses the output from <TT
+CLASS="LITERAL"
+>gcov</TT
+> to colourize the original source code (in
+<TT
+CLASS="LITERAL"
+>html</TT
+>) which allows the user to more quickly determine which
+parts of the code are run, relatively, more or less often than others.
+ </P
+><P
+>It can certainly be educational to instrument your application with coverage
+analysis enabled and run it in a deployed environment to see (under real scenarios)
+which lines of code are not reached, and how frequently each reached line of code is executed.
+However, in a deployed situation you're probably more interested in performance
+analysis (as opposed to simply coverage analysis) so the tool to use would be
+<TT
+CLASS="LITERAL"
+>gprof</TT
+>. Coverage information is very valuable, though, while
+performing tests since the generated data allows you to determine
+how much of your application code is being tested (or, conversely, which code
+paths are not being tested).
+ </P
+><P
+>You can use this tool as part of your regular build system to generate the colourized
+coverage analysis when running your tests.
+If your build uses the <TT
+CLASS="LITERAL"
+>autotools</TT
+> and makes use of the "<TT
+CLASS="LITERAL"
+>make check</TT
+>"
+target, you can easily encorporate this <TT
+CLASS="LITERAL"
+>gcov2html-check</TT
+> tool to provide
+<TT
+CLASS="LITERAL"
+>html</TT
+> files of your source code showing unit and/or integration test coverage
+automatically.
+ </P
+><P
+>If your application code is in C there is a unit test helper tool called <TT
+CLASS="LITERAL"
+>Check</TT
+>.
+<TT
+CLASS="LITERAL"
+>gcov2html-check</TT
+> also provides support for converting the XML output from the <TT
+CLASS="LITERAL"
+>Check</TT
+> tool
+into test results (in addition to the source code coverage colourization).
+ </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="cs.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>gcov2html-check</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+>&nbsp;</TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>Code Sample</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>

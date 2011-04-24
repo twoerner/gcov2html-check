@@ -1,0 +1,306 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Adding Tests</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"><LINK
+REL="HOME"
+TITLE="gcov2html-check"
+HREF="index.html"><LINK
+REL="UP"
+TITLE="Check"
+HREF="chk.html"><LINK
+REL="PREVIOUS"
+TITLE="Check"
+HREF="chk.html"><LINK
+REL="NEXT"
+TITLE="HTML-izing Test Coverage"
+HREF="chk-gcov.html"></HEAD
+><BODY
+CLASS="SECT1"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="NAVHEADER"
+><TABLE
+SUMMARY="Header navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TH
+COLSPAN="3"
+ALIGN="center"
+>gcov2html-check</TH
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="left"
+VALIGN="bottom"
+><A
+HREF="chk.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="80%"
+ALIGN="center"
+VALIGN="bottom"
+>Chapter 6. Check</TD
+><TD
+WIDTH="10%"
+ALIGN="right"
+VALIGN="bottom"
+><A
+HREF="chk-gcov.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+></TABLE
+><HR
+ALIGN="LEFT"
+WIDTH="100%"></DIV
+><DIV
+CLASS="SECT1"
+><H1
+CLASS="SECT1"
+><A
+NAME="CHK-TEST"
+>6.2. Adding Tests</A
+></H1
+><P
+>Now we're ready to start adding tests in the <TT
+CLASS="FILENAME"
+>tests</TT
+> directory
+(with the help of <TT
+CLASS="LITERAL"
+>Check</TT
+>):
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;/*
+   &nbsp; * Copyright (C) 2011  Trevor Woerner
+   &nbsp; */
+   &nbsp;
+  5&nbsp;#include &#60;stdio.h&#62;
+   &nbsp;#include &#60;check.h&#62;
+   &nbsp;#include "bsort.h"
+   &nbsp;
+   &nbsp;/*----------------------------------------------*/
+ 10&nbsp;/* unit tests                                   */
+   &nbsp;/*----------------------------------------------*/
+   &nbsp;START_TEST (randomize_overunderflow)
+   &nbsp;{
+   &nbsp;	int arr[ARRSZ+2];
+ 15&nbsp;	unsigned i;
+   &nbsp;
+   &nbsp;	memset (arr, -1, sizeof (arr));
+   &nbsp;	randomize (&#38;arr[1], ARRSZ);
+   &nbsp;	fail_if ((arr[0] != -1), "array underflow!");
+ 20&nbsp;	for (i=1; i&#60;ARRSZ+1; ++i)
+   &nbsp;		fail_if ((arr[i] == -1), "element @ %u not populated", i);
+   &nbsp;	fail_if ((arr[ARRSZ+1] != -1), "array overflow!");
+   &nbsp;}
+   &nbsp;END_TEST
+ 25&nbsp;
+   &nbsp;/*----------------------------------------------*/
+   &nbsp;/* test suites                                  */
+   &nbsp;/*----------------------------------------------*/
+   &nbsp;Suite *
+ 30&nbsp;bsort_suite (void)
+   &nbsp;{
+   &nbsp;	Suite *suite_p = suite_create ("bsort");
+   &nbsp;	TCase *tcRandomize_p = tcase_create ("randomize");
+   &nbsp;
+ 35&nbsp;	tcase_add_test (tcRandomize_p, randomize_overunderflow);
+   &nbsp;
+   &nbsp;	suite_add_tcase (suite_p, tcRandomize_p);
+   &nbsp;
+   &nbsp;	return suite_p;
+ 40&nbsp;}
+   &nbsp;
+   &nbsp;/*----------------------------------------------*/
+   &nbsp;/* meat and potatoes                            */
+   &nbsp;/*----------------------------------------------*/
+ 45&nbsp;int
+   &nbsp;main (void)
+   &nbsp;{
+   &nbsp;	int f1;
+   &nbsp;	SRunner *suiteRun;
+ 50&nbsp;
+   &nbsp;	suiteRun = srunner_create (bsort_suite ());
+   &nbsp;	srunner_set_xml (suiteRun, "CheckLog_bsort.xml");
+   &nbsp;	srunner_run_all (suiteRun, CK_VERBOSE);
+   &nbsp;	f1 = srunner_ntests_failed (suiteRun);
+ 55&nbsp;	srunner_free (suiteRun);
+   &nbsp;
+   &nbsp;	return f1;
+   &nbsp;}
+   &nbsp;  </PRE
+></TD
+></TR
+></TABLE
+>
+ </P
+><P
+>If you have a look at the <TT
+CLASS="LITERAL"
+>Check</TT
+> documentation you should be able to easily figure
+out what is going on. In short:
+<P
+></P
+><UL
+><LI
+><P
+>define each test between <TT
+CLASS="LITERAL"
+>START_TEST</TT
+> and <TT
+CLASS="LITERAL"
+>END_TEST</TT
+> pairs
+ </P
+></LI
+><LI
+><P
+>most of the stuff in the "test suites" and "meat and potatoes" sections are
+direct copies from the <TT
+CLASS="LITERAL"
+>Check</TT
+> examples
+ </P
+></LI
+><LI
+><P
+>the one and only test I've defined so far verifies that when we call <TT
+CLASS="FUNCTION"
+>randomize()</TT
+>
+it does not create objects outside of the defined size and start location
+ </P
+></LI
+></UL
+>
+ </P
+><P
+>A suitable <TT
+CLASS="FILENAME"
+>tests/Makefile.am</TT
+> would be:
+  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="PROGRAMLISTING"
+>   &nbsp;## Copyright (C) 2011  Trevor Woerner
+   &nbsp;
+   &nbsp;########################
+   &nbsp;## tests/Makefile.am
+  5&nbsp;########################
+   &nbsp;SUBDIRS = 
+   &nbsp;AM_MAKEFLAGS = -k
+   &nbsp;AM_CFLAGS = -Wall -Werror -Wextra -Wconversion -Wreturn-type -Wstrict-prototypes \
+   &nbsp;	-fprofile-arcs -ftest-coverage @CHECK_CFLAGS@
+ 10&nbsp;LDADD = @CHECK_LIBS@
+   &nbsp;
+   &nbsp;if COND_HAVE_CHECK
+   &nbsp;TESTS = check_bsort
+   &nbsp;noinst_PROGRAMS = check_bsort
+ 15&nbsp;check_bsort_SOURCES = check_bsort.c $(top_srcdir)/src/bsort.c
+   &nbsp;check_bsort_CFLAGS = -DUNDER_TEST $(AM_CFLAGS) -I$(top_srcdir)/src
+   &nbsp;
+   &nbsp;endif
+   &nbsp;
+ 20&nbsp;clean-local::
+   &nbsp;	$(RM) *png *html CheckLog*txt CheckLog*xml *.gc*
+   &nbsp;  </PRE
+></TD
+></TR
+></TABLE
+>
+ </P
+></DIV
+><DIV
+CLASS="NAVFOOTER"
+><HR
+ALIGN="LEFT"
+WIDTH="100%"><TABLE
+SUMMARY="Footer navigation table"
+WIDTH="100%"
+BORDER="0"
+CELLPADDING="0"
+CELLSPACING="0"
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+><A
+HREF="chk.html"
+ACCESSKEY="P"
+>&#60;&#60;&#60; Previous</A
+></TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="index.html"
+ACCESSKEY="H"
+>Home</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+><A
+HREF="chk-gcov.html"
+ACCESSKEY="N"
+>Next &#62;&#62;&#62;</A
+></TD
+></TR
+><TR
+><TD
+WIDTH="33%"
+ALIGN="left"
+VALIGN="top"
+>Check</TD
+><TD
+WIDTH="34%"
+ALIGN="center"
+VALIGN="top"
+><A
+HREF="chk.html"
+ACCESSKEY="U"
+>Up</A
+></TD
+><TD
+WIDTH="33%"
+ALIGN="right"
+VALIGN="top"
+>HTML-izing Test Coverage</TD
+></TR
+></TABLE
+></DIV
+></BODY
+></HTML
+>
