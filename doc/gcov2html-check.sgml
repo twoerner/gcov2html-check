@@ -36,6 +36,12 @@
                 <authorinitials>tw</authorinitials>
                 <revremark>Filled out most of the content.</revremark>
             </revision>
+            <revision>
+                <revnumber>0.2.0</revnumber>
+                <date>April 23, 2011</date>
+                <authorinitials>tw</authorinitials>
+                <revremark>Finished first draft.</revremark>
+            </revision>
         </revhistory>
     </bookinfo>
 
@@ -53,7 +59,7 @@ which lines of code are not reached, and how frequently each reached line of cod
 However, in a deployed situation you're probably more interested in performance
 analysis (as opposed to simply coverage analysis) so the tool to use would be
 <literal>gprof</literal>. Coverage information is very valuable, though, while
-performing unit tests since the generated data allows you to determine
+performing tests since the generated data allows you to determine
 how much of your application code is being tested (or, conversely, which code
 paths are not being tested).
  </para><para>
@@ -82,41 +88,25 @@ and isn't hard for the user to run (preferably no command-line arguments).
  </para><para>
 I decided to write a quick-and-dirty bubble sort implementation in C.
 My implementation starts off looking like this:
-  <programlistingco>
-   <areaspec>
-    <area id="cs.plco.main.args" coords='17'>
-    <area id="cs.plco.main.rdm" coords='22'>
-    <areaset id="cs.plco.main.p1" coords="">
-     <area id="cs.plco.main.p1c1" coords='24'>
-     <area id="cs.plco.main.p1c2" coords='25'>
-    </areaset>
-    <area id="cs.plco.main.sort" coords='27'>
-    <areaset id="cs.plco.main.p2" coords="">
-     <area id="cs.plco.main.p2c1" coords='29'>
-     <area id="cs.plco.main.p2c2" coords='30'>
-    </areaset>
-    <area id="cs.plco.main.swap" coords='32'>
-   </areaspec>
-   <programlisting>
+  <programlisting>
 /*
  * Copyright (C) 2011  Trevor Woerner
  */
 
 #include &lt;stdio.h>
-#include &lt;stdbool.h>
 #include &lt;stdlib.h>
 #include &lt;time.h>
 
 #define ARRSZ 32
 
-static void randomize (int arr[], unsigned sz);
-static unsigned bsort (int arr[], unsigned sz);
-static void print_array (int arr[], unsigned sz);
+static void randomize (int arr[], size_t sz);
+static unsigned bsort (int arr[], size_t sz);
+static void print_array (int arr[], size_t sz);
 
 int
 main (void)
 {
-	int arr[ARRSZ];
+	static int arr[ARRSZ];
 	unsigned swaps;
 
 	randomize (arr, ARRSZ);
@@ -135,10 +125,10 @@ main (void)
 }
 
 static void
-randomize (int arr[], unsigned sz)
+randomize (int arr[], size_t sz)
 {
 	time_t now;
-	unsigned i;
+	size_t i;
 
 	now = time (NULL);
 	srand ((unsigned int)now);
@@ -148,34 +138,37 @@ randomize (int arr[], unsigned sz)
 }
 
 static unsigned
-bsort (int arr[], unsigned sz)
+bsort (int arr[], size_t sz)
 {
-	unsigned i, j;
+	size_t unsortEnd, i;
 	int tmp;
-	bool swaps = false;
 	unsigned swapCnt = 0;
+	size_t lastSwap;
 
-	for (i=(sz-1); i>0; --i) {
-		for (j=0; j&lt;i; ++j) {
-			if (arr[j] > arr[j+1]) {
-				swaps = true;
+	for (unsortEnd=(sz-1); unsortEnd>0; --unsortEnd) {
+		lastSwap = 0;
+		for (i=0; i&lt;unsortEnd; ++i) {
+			if (arr[i] > arr[i+1]) {
 				++swapCnt;
-				tmp = arr[j];
-				arr[j] = arr[j+1];
-				arr[j+1] = tmp;
+				lastSwap = i + 1;
+
+				tmp = arr[i];
+				arr[i] = arr[i+1];
+				arr[i+1] = tmp;
 			}
 		}
-		if (!swaps)
+		if (lastSwap == 0)
 			break;
+		unsortEnd = lastSwap;
 	}
 
 	return swapCnt;
 }
 
 static void
-print_array (int arr[], unsigned sz)
+print_array (int arr[], size_t sz)
 {
-	unsigned i;
+	size_t i;
 
 	printf ("(");
 	for (i=0; i&lt;sz; ++i) {
@@ -185,29 +178,7 @@ print_array (int arr[], unsigned sz)
 	}
 	printf (")\n");
 }
-   </programlisting>
-   <calloutlist>
-    <callout arearefs="cs.plco.main.args">
-     <para>The <function>main()</function> function takes no command-line arguments,</para>
-    </callout>
-    <callout arearefs="cs.plco.main.rdm">
-     <para>calls a function (<function>randomize()</function>) to fill in an array with
-     arbitrary integer values,</para>
-    </callout>
-    <callout arearefs="cs.plco.main.p1">
-     <para>prints out the random array,</para>
-    </callout>
-    <callout arearefs="cs.plco.main.sort">
-     <para>sorts the array,</para>
-    </callout>
-    <callout arearefs="cs.plco.main.p2">
-     <para>prints out the sorted array,</para>
-    </callout>
-    <callout arearefs="cs.plco.main.swap">
-     <para>then prints the number of swaps that took place during the sort.</para>
-    </callout>
-   </calloutlist>
-  </programlistingco>
+  </programlisting>
  </para><para>
 For the initial pass I'll use the following simple &Makefile;:
   <programlisting>
@@ -284,9 +255,9 @@ source.
 Now run the program:
   <screen>
 $ <command>./bsort</command>
-start: (15 26 21 12 27 10 11 12 1 24 31 8 18 19 28 8 13 28 26 20 1 17 7 12 1 31 23 5 2 1 31 17)
-  end: (1 1 1 1 2 5 7 8 8 10 11 12 12 12 13 15 17 17 18 19 20 21 23 24 26 26 27 28 28 31 31 31)
-swaps: 267
+start: (31 22 0 31 2 23 23 17 3 15 11 0 25 21 1 0 5 9 23 12 13 14 25 3 19 14 15 31 22 16 18 21)
+  end: (0 0 0 1 2 3 3 5 9 11 12 13 14 14 15 15 16 17 18 19 21 21 22 22 23 23 23 25 25 31 31 31)
+  swaps: 224
   </screen>
  </para><para>
 When we look at the directory's contents:
@@ -309,7 +280,7 @@ human readable:
   <screen>
 $ <command>gcov bsort.c</command>
 File 'bsort.c'
-Lines executed:100.00% of 37
+Lines executed:100.00% of 38
 bsort.c:creating 'bsort.c.gcov'
   </screen>
  </para><para>
@@ -325,89 +296,90 @@ Here's what <filename>bsort.c.gcov</filename> looks like:
         -:    3: */
         -:    4:
         -:    5:#include &lt;stdio.h>
-        -:    6:#include &lt;stdbool.h>
-        -:    7:#include &lt;stdlib.h>
-        -:    8:#include &lt;time.h>
-        -:    9:
-        -:   10:#define ARRSZ 32
-        -:   11:
-        -:   12:static void randomize (int arr[], unsigned sz);
-        -:   13:static unsigned bsort (int arr[], unsigned sz);
-        -:   14:static void print_array (int arr[], unsigned sz);
-        -:   15:
-        -:   16:int
-        1:   17:main (void)
-        -:   18:{
-        -:   19:	int arr[ARRSZ];
-        -:   20:	unsigned swaps;
-        -:   21:
-        1:   22:	randomize (arr, ARRSZ);
-        -:   23:
-        1:   24:	printf ("start: ");
-        1:   25:	print_array (arr, ARRSZ);
-        -:   26:
-        1:   27:	swaps = bsort (arr, ARRSZ);
-        -:   28:
-        1:   29:	printf ("  end: ");
-        1:   30:	print_array (arr, ARRSZ);
-        -:   31:
-        1:   32:	printf ("swaps: %u\n", swaps);
-        -:   33:
-        1:   34:	return 0;
-        -:   35:}
-        -:   36:
-        -:   37:static void
-        1:   38:randomize (int arr[], unsigned sz)
-        -:   39:{
-        -:   40:	time_t now;
-        -:   41:	unsigned i;
-        -:   42:
-        1:   43:	now = time (NULL);
-        1:   44:	srand ((unsigned int)now);
-        -:   45:
-       33:   46:	for (i=0; i&lt;sz; ++i)
-       32:   47:		arr[i] = rand () % sz;
-        1:   48:}
-        -:   49:
-        -:   50:static unsigned
-        1:   51:bsort (int arr[], unsigned sz)
-        -:   52:{
-        -:   53:	unsigned i, j;
-        -:   54:	int tmp;
-        -:   55:	bool swaps;
-        1:   56:	unsigned swapCnt = 0;
-        -:   57:
-       27:   58:	for (i=(sz-1); i>0; --i) {
-       27:   59:		swaps = false;
-      513:   60:		for (j=0; j&lt;i; ++j) {
-      486:   61:			if (arr[j] > arr[j+1]) {
-      267:   62:				swaps = true;
-      267:   63:				++swapCnt;
-      267:   64:				tmp = arr[j];
-      267:   65:				arr[j] = arr[j+1];
-      267:   66:				arr[j+1] = tmp;
+        -:    6:#include &lt;stdlib.h>
+        -:    7:#include &lt;time.h>
+        -:    8:
+        -:    9:#define ARRSZ 32
+        -:   10:
+        -:   11:static void randomize (int arr[], size_t sz);
+        -:   12:static unsigned bsort (int arr[], size_t sz);
+        -:   13:static void print_array (int arr[], size_t sz);
+        -:   14:
+        -:   15:int
+        1:   16:main (void)
+        -:   17:{
+        -:   18:	static int arr[ARRSZ];
+        -:   19:	unsigned swaps;
+        -:   20:
+        1:   21:	randomize (arr, ARRSZ);
+        -:   22:
+        1:   23:	printf ("start: ");
+        1:   24:	print_array (arr, ARRSZ);
+        -:   25:
+        1:   26:	swaps = bsort (arr, ARRSZ);
+        -:   27:
+        1:   28:	printf ("  end: ");
+        1:   29:	print_array (arr, ARRSZ);
+        -:   30:
+        1:   31:	printf ("swaps: %u\n", swaps);
+        -:   32:
+        1:   33:	return 0;
+        -:   34:}
+        -:   35:
+        -:   36:static void
+        1:   37:randomize (int arr[], size_t sz)
+        -:   38:{
+        -:   39:	time_t now;
+        -:   40:	size_t i;
+        -:   41:
+        1:   42:	now = time (NULL);
+        1:   43:	srand ((unsigned int)now);
+        -:   44:
+       33:   45:	for (i=0; i&lt;sz; ++i)
+       32:   46:		arr[i] = rand () % (int)sz;
+        1:   47:}
+        -:   48:
+        -:   49:static unsigned
+        1:   50:bsort (int arr[], size_t sz)
+        -:   51:{
+        -:   52:	size_t unsortEnd, i;
+        -:   53:	int tmp;
+        1:   54:	unsigned swapCnt = 0;
+        -:   55:	size_t lastSwap;
+        -:   56:
+       18:   57:	for (unsortEnd=(sz-1); unsortEnd>0; --unsortEnd) {
+       18:   58:		lastSwap = 0;
+      387:   59:		for (i=0; i&lt;unsortEnd; ++i) {
+      369:   60:			if (arr[i] > arr[i+1]) {
+      224:   61:				++swapCnt;
+      224:   62:				lastSwap = i + 1;
+        -:   63:
+      224:   64:				tmp = arr[i];
+      224:   65:				arr[i] = arr[i+1];
+      224:   66:				arr[i+1] = tmp;
         -:   67:			}
         -:   68:		}
-       27:   69:		if (!swaps)
+       18:   69:		if (lastSwap == 0)
         1:   70:			break;
-        -:   71:	}
-        -:   72:
-        1:   73:	return swapCnt;
-        -:   74:}
-        -:   75:
-        -:   76:static void
-        2:   77:print_array (int arr[], unsigned sz)
-        -:   78:{
-        -:   79:	unsigned i;
-        -:   80:
-        2:   81:	printf ("(");
-       66:   82:	for (i=0; i&lt;sz; ++i) {
-       64:   83:		printf ("%u", arr[i]);
-       64:   84:		if (i != (sz - 1))
-       62:   85:			printf (" ");
-        -:   86:	}
-        2:   87:	printf (")\n");
-        2:   88:}
+       17:   71:		unsortEnd = lastSwap;
+        -:   72:	}
+        -:   73:
+        1:   74:	return swapCnt;
+        -:   75:}
+        -:   76:
+        -:   77:static void
+        2:   78:print_array (int arr[], size_t sz)
+        -:   79:{
+        -:   80:	size_t i;
+        -:   81:
+        2:   82:	printf ("(");
+       66:   83:	for (i=0; i&lt;sz; ++i) {
+       64:   84:		printf ("%u", arr[i]);
+       64:   85:		if (i != (sz - 1))
+       62:   86:			printf (" ");
+        -:   87:	}
+        2:   88:	printf (")\n");
+        2:   89:}
   </screen>
  </para><para>
  </para><para>
@@ -445,7 +417,7 @@ will also report on the number of times various branches are taken.
   <screen>
 $ <command>gcov -b bsort.c</command>
 File 'bsort.c'
-Lines executed:100.00% of 37
+Lines executed:100.00% of 38
 Branches executed:100.00% of 14
 Taken at least once:92.86% of 14
 Calls executed:100.00% of 14
@@ -464,121 +436,122 @@ This produces a slightly more verbose output:
         -:    3: */
         -:    4:
         -:    5:#include &lt;stdio.h>
-        -:    6:#include &lt;stdbool.h>
-        -:    7:#include &lt;stdlib.h>
-        -:    8:#include &lt;time.h>
-        -:    9:
-        -:   10:#define ARRSZ 32
-        -:   11:
-        -:   12:static void randomize (int arr[], unsigned sz);
-        -:   13:static unsigned bsort (int arr[], unsigned sz);
-        -:   14:static void print_array (int arr[], unsigned sz);
-        -:   15:
-        -:   16:int
+        -:    6:#include &lt;stdlib.h>
+        -:    7:#include &lt;time.h>
+        -:    8:
+        -:    9:#define ARRSZ 32
+        -:   10:
+        -:   11:static void randomize (int arr[], size_t sz);
+        -:   12:static unsigned bsort (int arr[], size_t sz);
+        -:   13:static void print_array (int arr[], size_t sz);
+        -:   14:
+        -:   15:int
 function main called 1 returned 100% blocks executed 100%
-        1:   17:main (void)
-        -:   18:{
-        -:   19:	int arr[ARRSZ];
-        -:   20:	unsigned swaps;
-        -:   21:
-        1:   22:	randomize (arr, ARRSZ);
+        1:   16:main (void)
+        -:   17:{
+        -:   18:	static int arr[ARRSZ];
+        -:   19:	unsigned swaps;
+        -:   20:
+        1:   21:	randomize (arr, ARRSZ);
 call    0 returned 100%
-        -:   23:
-        1:   24:	printf ("start: ");
+        -:   22:
+        1:   23:	printf ("start: ");
 call    0 returned 100%
-        1:   25:	print_array (arr, ARRSZ);
+        1:   24:	print_array (arr, ARRSZ);
 call    0 returned 100%
-        -:   26:
-        1:   27:	swaps = bsort (arr, ARRSZ);
+        -:   25:
+        1:   26:	swaps = bsort (arr, ARRSZ);
 call    0 returned 100%
-        -:   28:
-        1:   29:	printf ("  end: ");
+        -:   27:
+        1:   28:	printf ("  end: ");
 call    0 returned 100%
-        1:   30:	print_array (arr, ARRSZ);
+        1:   29:	print_array (arr, ARRSZ);
 call    0 returned 100%
-        -:   31:
-        1:   32:	printf ("swaps: %u\n", swaps);
+        -:   30:
+        1:   31:	printf ("swaps: %u\n", swaps);
 call    0 returned 100%
-        -:   33:
-        1:   34:	return 0;
-        -:   35:}
-        -:   36:
-        -:   37:static void
+        -:   32:
+        1:   33:	return 0;
+        -:   34:}
+        -:   35:
+        -:   36:static void
 function randomize called 1 returned 100% blocks executed 100%
-        1:   38:randomize (int arr[], unsigned sz)
-        -:   39:{
-        -:   40:	time_t now;
-        -:   41:	unsigned i;
-        -:   42:
-        1:   43:	now = time (NULL);
+        1:   37:randomize (int arr[], size_t sz)
+        -:   38:{
+        -:   39:	time_t now;
+        -:   40:	size_t i;
+        -:   41:
+        1:   42:	now = time (NULL);
 call    0 returned 100%
-        1:   44:	srand ((unsigned int)now);
+        1:   43:	srand ((unsigned int)now);
 call    0 returned 100%
-        -:   45:
-       33:   46:	for (i=0; i&lt;sz; ++i)
+        -:   44:
+       33:   45:	for (i=0; i&lt;sz; ++i)
 branch  0 taken 97%
 branch  1 taken 3% (fallthrough)
-       32:   47:		arr[i] = rand () % sz;
+       32:   46:		arr[i] = rand () % (int)sz;
 call    0 returned 100%
-        1:   48:}
-        -:   49:
-        -:   50:static unsigned
+        1:   47:}
+        -:   48:
+        -:   49:static unsigned
 function bsort called 1 returned 100% blocks executed 100%
-        1:   51:bsort (int arr[], unsigned sz)
-        -:   52:{
-        -:   53:	unsigned i, j;
-        -:   54:	int tmp;
-        -:   55:	bool swaps;
-        1:   56:	unsigned swapCnt = 0;
-        -:   57:
-       24:   58:	for (i=(sz-1); i>0; --i) {
+        1:   50:bsort (int arr[], size_t sz)
+        -:   51:{
+        -:   52:	size_t unsortEnd, i;
+        -:   53:	int tmp;
+        1:   54:	unsigned swapCnt = 0;
+        -:   55:	size_t lastSwap;
+        -:   56:
+       18:   57:	for (unsortEnd=(sz-1); unsortEnd>0; --unsortEnd) {
 branch  0 taken 100%
 branch  1 taken 0% (fallthrough)
-       24:   59:		swaps = false;
-      492:   60:		for (j=0; j&lt;i; ++j) {
+       18:   58:		lastSwap = 0;
+      387:   59:		for (i=0; i&lt;unsortEnd; ++i) {
 branch  0 taken 95%
 branch  1 taken 5% (fallthrough)
-      468:   61:			if (arr[j] > arr[j+1]) {
-branch  0 taken 54% (fallthrough)
-branch  1 taken 46%
-      251:   62:				swaps = true;
-      251:   63:				++swapCnt;
-      251:   64:				tmp = arr[j];
-      251:   65:				arr[j] = arr[j+1];
-      251:   66:				arr[j+1] = tmp;
+      369:   60:			if (arr[i] > arr[i+1]) {
+branch  0 taken 61% (fallthrough)
+branch  1 taken 39%
+      224:   61:				++swapCnt;
+      224:   62:				lastSwap = i + 1;
+        -:   63:
+      224:   64:				tmp = arr[i];
+      224:   65:				arr[i] = arr[i+1];
+      224:   66:				arr[i+1] = tmp;
         -:   67:			}
         -:   68:		}
-       24:   69:		if (!swaps)
-branch  0 taken 4% (fallthrough)
-branch  1 taken 96%
+       18:   69:		if (lastSwap == 0)
+branch  0 taken 6% (fallthrough)
+branch  1 taken 94%
         1:   70:			break;
-        -:   71:	}
-        -:   72:
-        1:   73:	return swapCnt;
-        -:   74:}
-        -:   75:
-        -:   76:static void
+       17:   71:		unsortEnd = lastSwap;
+        -:   72:	}
+        -:   73:
+        1:   74:	return swapCnt;
+        -:   75:}
+        -:   76:
+        -:   77:static void
 function print_array called 2 returned 100% blocks executed 100%
-        2:   77:print_array (int arr[], unsigned sz)
-        -:   78:{
-        -:   79:	unsigned i;
-        -:   80:
-        2:   81:	printf ("(");
+        2:   78:print_array (int arr[], size_t sz)
+        -:   79:{
+        -:   80:	size_t i;
+        -:   81:
+        2:   82:	printf ("(");
 call    0 returned 100%
-       66:   82:	for (i=0; i&lt;sz; ++i) {
+       66:   83:	for (i=0; i&lt;sz; ++i) {
 branch  0 taken 97%
 branch  1 taken 3% (fallthrough)
-       64:   83:		printf ("%u", arr[i]);
+       64:   84:		printf ("%u", arr[i]);
 call    0 returned 100%
-       64:   84:		if (i != (sz - 1))
+       64:   85:		if (i != (sz - 1))
 branch  0 taken 97% (fallthrough)
 branch  1 taken 3%
-       62:   85:			printf (" ");
+       62:   86:			printf (" ");
 call    0 returned 100%
-        -:   86:	}
-        2:   87:	printf (")\n");
+        -:   87:	}
+        2:   88:	printf (")\n");
 call    0 returned 100%
-        2:   88:}
+        2:   89:}
   </screen>
  </para><para>
 Alternatively, in order to better visualize the code coverage,
@@ -698,7 +671,7 @@ Using the bubble sort code from above as an example I would start by renaming
 its <literal>main()</literal> to, say, <literal>bsort_main()</literal>:
   <programlisting>
 ...
-static void print_array (int arr[], unsigned sz);
+static void print_array (int arr[], size_t sz);
   
 int
 bsort_main (void)
@@ -775,9 +748,9 @@ to make it easy I create a header file:
 
 #define ARRSZ 32
 
-static void randomize (int arr[], unsigned sz);
-static unsigned bsort (int arr[], unsigned sz);
-static void print_array (int arr[], unsigned sz);
+static void randomize (int arr[], size_t sz);
+static unsigned bsort (int arr[], size_t sz);
+static void print_array (int arr[], size_t sz);
 
 #endif // BSORT__H
   </programlisting>
@@ -970,7 +943,9 @@ clean-local::
   </programlisting>
  </para><para>
 Now you'll end up with a <filename>CheckLog.html</filename> which summarizes the tests
-that were run and a <filename>bsort.c.html</filename> that shows how well your tests
+that were run
+  <graphic fileref="summary.png">
+and a <filename>bsort.c.html</filename> that shows how well your tests
 covered your source code.
   <graphic fileref="coverage.png">
  </para><para>

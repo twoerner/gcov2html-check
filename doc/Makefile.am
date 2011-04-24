@@ -4,7 +4,7 @@
 ## sgml doc/Makefile.am
 ########################
 SUBDIRS = 
-IMAGES = html.png coverage.png
+IMAGES = html.png coverage.png summary.png
 EXTRA_DIST = gcov2html-check.sgml stylesheet.dsl $(IMAGES)
 if BUILDDOCS
 all-local:: index.html pdf txt
