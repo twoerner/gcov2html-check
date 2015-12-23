@@ -17,14 +17,11 @@ else
 fi
 
 LINES=`wc -l $2 | cut -d' ' -f1`
-LINESM2=`expr $LINES - 2`
-LINESM3=`expr $LINES - 3`
+LINESM1=`expr $LINES - 1`
 
-NEWFILEDATA=`tail -n $LINESM2 $2 | head -n $LINESM3`
+NEWFILEDATA=`head -n $LINESM1 $2`
 NEWFILE=`mktemp tmp.XXXXXXXXXX`
 
-echo "<?xml version=\"1.0\"?>" >> $NEWFILE
-echo "<testsuites xmlns=\"http://check.sourceforge.net/ns\">" >> $NEWFILE
 echo $NEWFILEDATA >> $NEWFILE
 echo "<coverage>$COVERAGE</coverage>" >> $NEWFILE
 echo "<branches>$BRANCHES</branches>" >> $NEWFILE
