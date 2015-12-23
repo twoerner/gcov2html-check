@@ -291,7 +291,7 @@ process_cmdline_args (int argc, char *argv[])
 				perror ("malloc (outFileName)");
 				exit (1);
 			}
-			memset (outFileName_pG, 0, sizeof (outFileName_pG));
+			memset (outFileName_pG, 0, sizeof (*outFileName_pG));
 			memcpy (outFileName_pG, basename (argv[optind]),
 					strlen (basename (argv[optind])));
 			ptr = strstr (outFileName_pG, ".gcov");
