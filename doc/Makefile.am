@@ -18,15 +18,19 @@ INST_IMAGES = $(addprefix $(top_srcdir)/doc/,$(IMAGES))
 
 index.html: gcov2html-check.sgml stylesheet.dsl $(INST_IMAGES)
 	$(RM) *.html *.htm
-	for image in $(INST_IMAGES); do \
-		$(INSTALL) "$$image" .; \
-	done
+	if [ "$(top_srcdir)" != "$(top_builddir)" ]; then \
+		for image in $(INST_IMAGES); do \
+			$(INSTALL) "$$image" .; \
+		done; \
+	fi
 	$(doc_html) -d '$(stylesheet)#html' $<
 
 gcov2html-check.pdf: gcov2html-check.sgml stylesheet.dsl $(INST_IMAGES)
-	for image in $(INST_IMAGES); do \
-		$(INSTALL) "$$image" .; \
-	done
+	if [ "$(top_srcdir)" != "$(top_builddir)" ]; then \
+		for image in $(INST_IMAGES); do \
+			$(INSTALL) "$$image" .; \
+		done; \
+	fi
 	$(doc_pdf) -d '$(stylesheet)#print' $<
 
 gcov2html-check.txt: gcov2html-check.sgml stylesheet.dsl
@@ -50,4 +54,6 @@ uninstall-local::
 
 clean-local::
 	$(RM) *.html *.htm *.pdf *.txt
-	-$(RM) $(IMAGES)
+	if [ "$(top_srcdir)" != "$(top_builddir)" ]; then \
+		$(RM) $(IMAGES); \
+	fi
